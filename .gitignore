@@ -1,0 +1,43 @@
+# Python
+__pycache__/
+venv/
+.cache
+
+# Node
+node_modules/
+npm-debug.log*
+
+# Next.js
+.next/
+build/
+
+# IDEs and editors
+.vscode/
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Docker
+.env
+.dockerignore
+
+# Logs
+logs
+*.log
+
+# Build files
+dist/
+build/
+
+# Temporary files
+tmp/
+temp/
+
+# TypeScript
+*.tsbuildinfo
+next-env.d.ts
+
+# Jupyter
+*.ipynb
+.ipynb_checkpoints/
