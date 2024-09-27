@@ -25,7 +25,6 @@ async def init_db():
         await conn.run_sync(Base.metadata.create_all)
     logger.info("Database initialized.")
 
-
 async def get_db() -> AsyncSession:
     async with SessionLocal() as session:
         try:
