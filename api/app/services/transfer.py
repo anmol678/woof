@@ -13,18 +13,18 @@ class TransferService:
         async with db.begin():
             result = await db.execute(
                 select(Account).where(
-                    (Account.id == transfer.sender_id) | (Account.id == transfer.receiver_id)
+                    (Account.account_number == transfer.sender_account_number) | (Account.account_number == transfer.receiver_account_number)
                 ).with_for_update()
             )
             accounts = result.scalars().all()
 
-            sender = next((acc for acc in accounts if acc.id == transfer.sender_id), None)
-            receiver = next((acc for acc in accounts if acc.id == transfer.receiver_id), None)
+            sender = next((acc for acc in accounts if acc.account_number == transfer.sender_account_number), None)
+            receiver = next((acc for acc in accounts if acc.account_number == transfer.receiver_account_number), None)
 
             if not sender:
-                raise AccountNotFoundException(account_id=transfer.sender_id)
+                raise AccountNotFoundException(account_number=transfer.sender_account_number)
             if not receiver:
-                raise AccountNotFoundException(account_id=transfer.receiver_id)
+                raise AccountNotFoundException(account_number=transfer.receiver_account_number)
             if sender.balance < transfer.amount:
                 raise InsufficientFundsException()
 
@@ -33,8 +33,8 @@ class TransferService:
 
             db_transfer = Transfer(
                 amount=transfer.amount,
-                sender_id=sender.id,
-                receiver_id=receiver.id
+                sender_account_number=sender.account_number,
+                receiver_account_number=receiver.account_number
             )
             db.add(db_transfer)
 
@@ -42,15 +42,18 @@ class TransferService:
         return db_transfer
 
     @staticmethod
-    async def get_transfer_history(account_id: int, db: AsyncSession) -> list[Transfer]:
-        result = await db.execute(select(Account).where(Account.id == account_id))
+    async def get_transfer_history(account_number: str, db: AsyncSession) -> list[Transfer]:
+        result = await db.execute(
+            select(Account)
+            .where(Account.account_number == account_number)
+        )
         account = result.scalar_one_or_none()
         if not account:
-            raise AccountNotFoundException(account_id=account_id)
+            raise AccountNotFoundException(account_number=account_number)
 
         result = await db.execute(
             select(Transfer).where(
-                (Transfer.sender_id == account_id) | (Transfer.receiver_id == account_id)
+                (Transfer.sender_account_number == account.account_number) | (Transfer.receiver_account_number == account.account_number)
             ).order_by(Transfer.timestamp.desc())
         )
         transfers = result.scalars().all()

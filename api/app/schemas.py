@@ -30,16 +30,16 @@ class AccountBalance(BaseModel):
     balance: float
 
 class TransferCreate(BaseModel):
-    sender_id: int
-    receiver_id: int
+    sender_account_number: str
+    receiver_account_number: str
     amount: float
 
 class Transfer(BaseModel):
     id: int
     amount: float
     timestamp: datetime
-    sender_id: int
-    receiver_id: int
+    sender_account_number: str
+    receiver_account_number: str
 
     class Config:
         from_attributes = True
