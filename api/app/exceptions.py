@@ -3,17 +3,17 @@ from starlette.status import HTTP_400_BAD_REQUEST, HTTP_404_NOT_FOUND
 
 
 class CustomerNotFoundException(HTTPException):
-    def __init__(self, customer_id: int):
+    def __init__(self, customer_number: str):
         super().__init__(
             status_code=HTTP_404_NOT_FOUND,
-            detail=f"Customer with ID {customer_id} not found."
+            detail=f"Customer with number {customer_number} not found."
         )
 
 class AccountNotFoundException(HTTPException):
-    def __init__(self, account_id: int):
+    def __init__(self, account_number: str):
         super().__init__(
             status_code=HTTP_404_NOT_FOUND,
-            detail=f"Account with ID {account_id} not found."
+            detail=f"Account with number {account_number} not found."
         )
 
 class InsufficientFundsException(HTTPException):
@@ -30,3 +30,9 @@ class InvalidCustomerNumberException(HTTPException):
             detail=f"Invalid customer number: {customer_number}."
         )
 
+class InvalidAccountNumberException(HTTPException):
+    def __init__(self, account_number: str):
+        super().__init__(
+            status_code=HTTP_400_BAD_REQUEST,
+            detail=f"Invalid account number: {account_number}."
+        )
