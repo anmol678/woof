@@ -14,14 +14,14 @@ class Customer(BaseModel):
         from_attributes = True
 
 class AccountCreate(BaseModel):
-    customer_id: int
+    customer_number: str
     initial_deposit: float
 
 class Account(BaseModel):
     id: int
     account_number: str
     balance: float
-    customer_id: int
+    customer_number: str
 
     class Config:
         from_attributes = True

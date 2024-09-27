@@ -12,15 +12,15 @@ router = APIRouter()
 async def create_account(account: AccountCreate, db: AsyncSession = Depends(get_db)):
     return await AccountService.create_account(account, db)
 
-@router.get("/{account_id}/balance/", response_model=AccountBalance, status_code=200)
-async def get_balance(account_id: int, db: AsyncSession = Depends(get_db)):
-    account = await AccountService.get_account(account_id, db)
+@router.get("/{account_number}/balance/", response_model=AccountBalance, status_code=200)
+async def get_balance(account_number: str, db: AsyncSession = Depends(get_db)):
+    account = await AccountService.get_account(account_number, db)
     return AccountBalance(balance=account.balance)
 
-@router.get("/{account_id}", response_model=Account, status_code=200)
-async def get_account(account_id: int, db: AsyncSession = Depends(get_db)):
-    return await AccountService.get_account(account_id, db)
+@router.get("/{account_number}", response_model=Account, status_code=200)
+async def get_account(account_number: str, db: AsyncSession = Depends(get_db)):
+    return await AccountService.get_account(account_number, db)
 
-@router.get("/{account_id}/transfers/", response_model=list[Transfer], status_code=200)
-async def get_transfer_history(account_id: int, db: AsyncSession = Depends(get_db)):
-    return await TransferService.get_transfer_history(account_id, db)
+@router.get("/{account_number}/transfers/", response_model=list[Transfer], status_code=200)
+async def get_transfer_history(account_number: str, db: AsyncSession = Depends(get_db)):
+    return await TransferService.get_transfer_history(account_number, db)
