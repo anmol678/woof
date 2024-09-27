@@ -1,10 +1,11 @@
 import os
-from fastapi import FastAPI, APIRouter
+from fastapi import FastAPI, APIRouter, Security
 from fastapi.middleware.cors import CORSMiddleware
 
 from app.routes import customers, accounts, transfers
 from app.db import init_db
 from app.constants import API_PREFIX
+from app.security import get_api_key
 from app.exceptions import exception_to_status_code, service_exception_handler
 from app.utils.logger import logger
 
@@ -17,7 +18,7 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-router = APIRouter(prefix=API_PREFIX)
+router = APIRouter(prefix=API_PREFIX, dependencies=[Security(get_api_key)])
 router.include_router(customers.router, prefix="/customers", tags=["Customers"])
 router.include_router(accounts.router, prefix="/accounts", tags=["Accounts"])
 router.include_router(transfers.router, prefix="/transfers", tags=["Transfers"])
