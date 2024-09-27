@@ -3,13 +3,18 @@ from sqlalchemy import select
 
 from app.models import Transfer, Account
 from app.schemas import TransferCreate
-from app.exceptions import AccountNotFoundException, InsufficientFundsException
+from app.exceptions import *
+from app.utils.validators import validate_account_number
 
 class TransferService:
     """Service layer for transfer-related operations."""
 
     @staticmethod
     async def create_transfer(transfer: TransferCreate, db: AsyncSession) -> Transfer:
+        if not validate_account_number(transfer.sender_account_number):
+            raise InvalidAccountNumberException(account_number=transfer.sender_account_number)
+        if not validate_account_number(transfer.receiver_account_number):
+            raise InvalidAccountNumberException(account_number=transfer.receiver_account_number)
         async with db.begin():
             result = await db.execute(
                 select(Account).where(
@@ -43,6 +48,8 @@ class TransferService:
 
     @staticmethod
     async def get_transfer_history(account_number: str, db: AsyncSession) -> list[Transfer]:
+        if not validate_account_number(account_number):
+            raise InvalidAccountNumberException(account_number=account_number)
         result = await db.execute(
             select(Account)
             .where(Account.account_number == account_number)
