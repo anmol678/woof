@@ -4,7 +4,7 @@ from sqlalchemy import select
 from app.models import Transfer, Account
 from app.schemas import TransferCreate
 from app.exceptions import *
-from app.utils.validators import validate_account_number
+from app.utils.validators import validate_account_number, validate_amount
 
 class TransferService:
     """Service layer for transfer-related operations."""
@@ -15,6 +15,8 @@ class TransferService:
             raise InvalidAccountNumberException(account_number=transfer.sender_account_number)
         if not validate_account_number(transfer.receiver_account_number):
             raise InvalidAccountNumberException(account_number=transfer.receiver_account_number)
+        if not validate_amount(transfer.amount):
+            raise InvalidAmountException(amount=transfer.amount)
         async with db.begin():
             result = await db.execute(
                 select(Account).where(

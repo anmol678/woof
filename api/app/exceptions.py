@@ -36,3 +36,10 @@ class InvalidAccountNumberException(HTTPException):
             status_code=HTTP_400_BAD_REQUEST,
             detail=f"Invalid account number: {account_number}."
         )
+
+class InvalidAmountException(HTTPException):
+    def __init__(self, amount: float):
+        super().__init__(
+            status_code=HTTP_400_BAD_REQUEST,
+            detail=f"Invalid amount: {amount}."
+        )

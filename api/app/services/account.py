@@ -6,7 +6,7 @@ from sqlalchemy.future import select
 from app.models import Account, ACCOUNT_NUMBER_LENGTH, Customer
 from app.schemas import AccountCreate
 from app.exceptions import *
-from app.utils.validators import validate_customer_number,validate_account_number
+from app.utils.validators import validate_customer_number, validate_account_number, validate_amount
 
 
 class AccountService:
@@ -16,6 +16,8 @@ class AccountService:
     async def create_account(account: AccountCreate, db: AsyncSession) -> Account:
         if not validate_customer_number(account.customer_number):
             raise InvalidCustomerNumberException(customer_number=account.customer_number)
+        if not validate_amount(account.initial_deposit):
+            raise InvalidAmountException(amount=account.initial_deposit)
         async with db.begin():
             result = await db.execute(
                 select(Customer)
