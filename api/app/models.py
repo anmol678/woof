@@ -3,10 +3,7 @@ from sqlalchemy.orm import relationship
 from sqlalchemy.sql import func
 
 from app.db import Base
-
-
-ACCOUNT_NUMBER_LENGTH = 12
-CUSTOMER_NUMBER_LENGTH = 10
+from app.constants import ACCOUNT_NUMBER_LENGTH, CUSTOMER_NUMBER_LENGTH
 
 class Customer(Base):
     __tablename__ = "customers"

@@ -1,6 +1,6 @@
 import re
 from decimal import Decimal
-from app.models import ACCOUNT_NUMBER_LENGTH, CUSTOMER_NUMBER_LENGTH
+from app.constants import ACCOUNT_NUMBER_LENGTH, CUSTOMER_NUMBER_LENGTH
 
 
 def validate_account_number(account_number: str) -> bool:
