@@ -38,8 +38,15 @@ class InvalidAccountNumberException(HTTPException):
         )
 
 class InvalidAmountException(HTTPException):
-    def __init__(self, amount: float):
+    def __init__(self, amount: float, reason: str):
         super().__init__(
             status_code=HTTP_400_BAD_REQUEST,
-            detail=f"Invalid amount: {amount}."
+            detail=f"Invalid amount: {amount}. {reason}"
+        )
+
+class ExcessiveAmountException(HTTPException):
+    def __init__(self, amount: float, max_amount: float):
+        super().__init__(
+            status_code=HTTP_400_BAD_REQUEST,
+            detail=f"Amount {amount} exceeds maximum allowed amount of {max_amount}."
         )

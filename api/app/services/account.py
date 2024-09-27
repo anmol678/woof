@@ -16,8 +16,9 @@ class AccountService:
     async def create_account(account: AccountCreate, db: AsyncSession) -> Account:
         if not validate_customer_number(account.customer_number):
             raise InvalidCustomerNumberException(customer_number=account.customer_number)
-        if not validate_amount(account.initial_deposit):
-            raise InvalidAmountException(amount=account.initial_deposit)
+        
+        validate_amount(account.initial_deposit)
+        
         async with db.begin():
             result = await db.execute(
                 select(Customer)

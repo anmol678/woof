@@ -15,8 +15,9 @@ class TransferService:
             raise InvalidAccountNumberException(account_number=transfer.sender_account_number)
         if not validate_account_number(transfer.receiver_account_number):
             raise InvalidAccountNumberException(account_number=transfer.receiver_account_number)
-        if not validate_amount(transfer.amount):
-            raise InvalidAmountException(amount=transfer.amount)
+        
+        validate_amount(transfer.amount)
+
         async with db.begin():
             result = await db.execute(
                 select(Account).where(
