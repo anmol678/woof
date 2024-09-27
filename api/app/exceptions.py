@@ -22,3 +22,11 @@ class InsufficientFundsException(HTTPException):
             status_code=HTTP_400_BAD_REQUEST,
             detail="Insufficient funds in the sender's account."
         )
+
+class InvalidCustomerNumberException(HTTPException):
+    def __init__(self, customer_number: str):
+        super().__init__(
+            status_code=HTTP_400_BAD_REQUEST,
+            detail=f"Invalid customer number: {customer_number}."
+        )
+
