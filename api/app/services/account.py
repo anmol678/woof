@@ -1,12 +1,12 @@
-import random
-import string
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.future import select
 
-from app.models import Account, ACCOUNT_NUMBER_LENGTH, Customer
+from app.models import Account, Customer
 from app.schemas import AccountCreate
+from app.constants import ACCOUNT_NUMBER_LENGTH
 from app.exceptions import *
 from app.utils.validators import validate_customer_number, validate_account_number, validate_amount
+from app.utils.number_generator import generate_unique_number
 
 
 class AccountService:
@@ -48,13 +48,12 @@ class AccountService:
         return account
 
     @staticmethod
+    async def check_account_number_exists(db: AsyncSession, account_number: str) -> bool:
+        result = await db.execute(
+            select(Account).where(Account.account_number == account_number).limit(1)
+        )
+        return result.scalar_one_or_none() is not None
+
     async def generate_unique_account_number(db: AsyncSession) -> str:
-        while True:
-            account_number = ''.join(random.choices(string.digits, k=ACCOUNT_NUMBER_LENGTH))
-            result = await db.execute(
-                select(Account)
-                .where(Account.account_number == account_number)
-                .limit(1)
-            )
-            if not result.scalar_one_or_none():
-                return account_number
+        return await generate_unique_number(db, ACCOUNT_NUMBER_LENGTH, AccountService.check_account_number_exists)
+

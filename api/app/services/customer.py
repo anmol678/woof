@@ -1,14 +1,14 @@
-import random
-import string
-import re
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.future import select
 from sqlalchemy.orm import selectinload
 
-from app.models import Customer, CUSTOMER_NUMBER_LENGTH, Account
+from app.models import Customer, Account
 from app.schemas import CustomerCreate
+from app.constants import CUSTOMER_NUMBER_LENGTH
 from app.exceptions import CustomerNotFoundException, InvalidCustomerNumberException
 from app.utils.validators import validate_customer_number
+from app.utils.number_generator import generate_unique_number
+
 
 class CustomerService:
     """Service layer for customer-related operations."""
@@ -47,13 +47,12 @@ class CustomerService:
         return customer.accounts
 
     @staticmethod
+    async def check_customer_number_exists(db: AsyncSession, customer_number: str) -> bool:
+        result = await db.execute(
+            select(Customer).where(Customer.customer_number == customer_number).limit(1)
+        )
+        return result.scalar_one_or_none() is not None
+
+    @staticmethod
     async def generate_unique_customer_number(db: AsyncSession) -> str:
-        while True:
-            customer_number = ''.join(random.choices(string.digits, k=CUSTOMER_NUMBER_LENGTH))
-            result = await db.execute(
-                select(Customer)
-                .where(Customer.customer_number == customer_number)
-                .limit(1)
-            )
-            if result.first() is None:
-                return customer_number
+        return await generate_unique_number(db, CUSTOMER_NUMBER_LENGTH, CustomerService.check_customer_number_exists)
