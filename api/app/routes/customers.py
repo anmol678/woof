@@ -12,9 +12,9 @@ router = APIRouter()
 async def create_customer(customer: CustomerCreate, db: AsyncSession = Depends(get_db)):
     return await CustomerService.create_customer(customer, db)
 
-@router.get("/{customer_id}", response_model=Customer, status_code=200)
-async def get_customer(customer_id: int, db: AsyncSession = Depends(get_db)):
-    return await CustomerService.get_customer(customer_id, db)
+@router.get("/{customer_number}", response_model=Customer, status_code=200)
+async def get_customer(customer_number: str, db: AsyncSession = Depends(get_db)):
+    return await CustomerService.get_customer(customer_number, db)
 
 @router.get("/", response_model=list[Customer], status_code=200)
 async def list_customers(db: AsyncSession = Depends(get_db)):
