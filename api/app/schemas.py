@@ -7,6 +7,7 @@ class CustomerCreate(BaseModel):
 
 class Customer(BaseModel):
     id: int
+    customer_number: str
     name: str
 
     class Config:
