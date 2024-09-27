@@ -4,8 +4,9 @@ from fastapi.middleware.cors import CORSMiddleware
 
 from app.routes import customers, accounts, transfers
 from app.db import init_db
-from app.utils.logger import logger
 from app.constants import API_PREFIX
+from app.exceptions import exception_to_status_code, service_exception_handler
+from app.utils.logger import logger
 
 app = FastAPI()
 app.add_middleware(
@@ -30,3 +31,6 @@ async def startup_event():
 @app.get("/")
 async def root():
     return {"message": "Welcome to the Bank API"}
+
+for exception_class in exception_to_status_code.keys():
+    app.add_exception_handler(exception_class, service_exception_handler)
