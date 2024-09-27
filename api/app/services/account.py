@@ -32,6 +32,7 @@ class AccountService:
                 owner=customer
             )
             db.add(db_account)
+            await db.flush()
             await db.refresh(db_account)
             return db_account
 
@@ -49,11 +50,10 @@ class AccountService:
     async def generate_unique_account_number(db: AsyncSession) -> str:
         while True:
             account_number = ''.join(random.choices(string.digits, k=ACCOUNT_NUMBER_LENGTH))
-            async with db.begin():
-                result = await db.execute(
-                    select(Account)
-                    .where(Account.account_number == account_number)
-                    .limit(1)
-                )
-                if result.first() is None:
-                    return account_number
+            result = await db.execute(
+                select(Account)
+                .where(Account.account_number == account_number)
+                .limit(1)
+            )
+            if not result.scalar_one_or_none():
+                return account_number

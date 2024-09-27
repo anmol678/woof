@@ -30,9 +30,9 @@ class Account(Base):
     id = Column(Integer, primary_key=True)
     account_number = Column(String(ACCOUNT_NUMBER_LENGTH), unique=True, index=True, nullable=False)
     balance = Column(Float, default=0.0, nullable=False)
-    customer_id = Column(Integer, ForeignKey("customers.id"), nullable=False)
+    customer_number = Column(String(CUSTOMER_NUMBER_LENGTH), ForeignKey("customers.customer_number"), nullable=False)
 
-    owner = relationship("Customer", back_populates="accounts")
+    owner = relationship("Customer", back_populates="accounts", foreign_keys=[customer_number])
     transfers_sent = relationship("Transfer", back_populates="sender", foreign_keys='Transfer.sender_account_number', cascade="all, delete-orphan")
     transfers_received = relationship("Transfer", back_populates="receiver", foreign_keys='Transfer.receiver_account_number', cascade="all, delete-orphan")
 
