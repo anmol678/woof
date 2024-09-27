@@ -23,6 +23,9 @@ router.include_router(accounts.router, prefix="/accounts", tags=["Accounts"])
 router.include_router(transfers.router, prefix="/transfers", tags=["Transfers"])
 app.include_router(router)
 
+for exception_class in exception_to_status_code.keys():
+    app.add_exception_handler(exception_class, service_exception_handler)
+
 @app.on_event("startup")
 async def startup_event():
     await init_db()
@@ -31,6 +34,3 @@ async def startup_event():
 @app.get("/")
 async def root():
     return {"message": "Welcome to the Bank API"}
-
-for exception_class in exception_to_status_code.keys():
-    app.add_exception_handler(exception_class, service_exception_handler)

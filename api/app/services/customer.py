@@ -15,10 +15,10 @@ class CustomerService:
 
     @staticmethod
     async def create_customer(customer: CustomerCreate, db: AsyncSession) -> Customer:
-        customer_number = await CustomerService.generate_unique_customer_number(db)
-        db_customer = Customer(name=customer.name, customer_number=customer_number)
-        db.add(db_customer)
-        await db.commit()
+        async with db.begin():
+            customer_number = await CustomerService.generate_unique_customer_number(db)
+            db_customer = Customer(name=customer.name, customer_number=customer_number)
+            db.add(db_customer)
         await db.refresh(db_customer)
         return db_customer
 
