@@ -7,10 +7,7 @@ from sqlalchemy.future import select
 from app.models import Customer, CUSTOMER_NUMBER_LENGTH, Account
 from app.schemas import CustomerCreate
 from app.exceptions import CustomerNotFoundException, InvalidCustomerNumberException
-
-
-def validate_customer_number(customer_number: str) -> bool:
-    return bool(re.match(f"^\\d{{{CUSTOMER_NUMBER_LENGTH}}}$", customer_number))
+from app.utils.validators import validate_customer_number
 
 class CustomerService:
     """Service layer for customer-related operations."""
@@ -54,6 +51,5 @@ class CustomerService:
                 .where(Customer.customer_number == customer_number)
                 .limit(1)
             )
-            existing_customer = result.scalar_one_or_none()
-            if not existing_customer:
+            if result.first() is None:
                 return customer_number
