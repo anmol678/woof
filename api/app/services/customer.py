@@ -3,6 +3,7 @@ import string
 import re
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.future import select
+from sqlalchemy.orm import selectinload
 
 from app.models import Customer, CUSTOMER_NUMBER_LENGTH, Account
 from app.schemas import CustomerCreate
@@ -22,10 +23,13 @@ class CustomerService:
         return db_customer
 
     @staticmethod
-    async def get_customer(customer_number: str, db: AsyncSession) -> Customer:
+    async def get_customer(customer_number: str, db: AsyncSession, include_accounts: bool = False) -> Customer:
         if not validate_customer_number(customer_number):
             raise InvalidCustomerNumberException(customer_number=customer_number)
-        result = await db.execute(select(Customer).where(Customer.customer_number == customer_number))
+        query = select(Customer).where(Customer.customer_number == customer_number)
+        if include_accounts:
+            query = query.options(selectinload(Customer.accounts))
+        result = await db.execute(query)
         customer = result.scalar_one_or_none()
         if not customer:
             raise CustomerNotFoundException(customer_number=customer_number)
@@ -39,7 +43,7 @@ class CustomerService:
 
     @staticmethod
     async def get_customer_accounts(customer_number: str, db: AsyncSession) -> list[Account]:
-        customer = await CustomerService.get_customer(customer_number, db)
+        customer = await CustomerService.get_customer(customer_number, db, include_accounts=True)
         return customer.accounts
 
     @staticmethod

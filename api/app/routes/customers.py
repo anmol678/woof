@@ -2,7 +2,7 @@ from fastapi import APIRouter, Depends
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.db import get_db
-from app.schemas import Customer, CustomerCreate
+from app.schemas import Customer, CustomerCreate, Account
 from app.services import CustomerService
 
 
@@ -19,3 +19,7 @@ async def get_customer(customer_number: str, db: AsyncSession = Depends(get_db))
 @router.get("/", response_model=list[Customer], status_code=200)
 async def list_customers(db: AsyncSession = Depends(get_db)):
     return await CustomerService.list_customers(db)
+
+@router.get("/{customer_number}/accounts", response_model=list[Account], status_code=200)
+async def get_customer_accounts(customer_number: str, db: AsyncSession = Depends(get_db)):
+    return await CustomerService.get_customer_accounts(customer_number, db)
