@@ -34,9 +34,8 @@ class AccountService:
                 owner=customer
             )
             db.add(db_account)
-            await db.flush()
-            await db.refresh(db_account)
-            return db_account
+        await db.refresh(db_account)
+        return db_account
 
     @staticmethod
     async def get_account(account_number: str, db: AsyncSession) -> Account:
