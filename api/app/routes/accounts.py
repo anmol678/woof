@@ -24,3 +24,7 @@ async def get_account(account_number: str, db: AsyncSession = Depends(get_db)):
 @router.get("/{account_number}/transfers/", response_model=list[Transfer], status_code=200)
 async def get_transfer_history(account_number: str, db: AsyncSession = Depends(get_db)):
     return await TransferService.get_transfer_history(account_number, db)
+
+@router.get("/", response_model=list[Account], status_code=200)
+async def list_accounts(db: AsyncSession = Depends(get_db)):
+    return await AccountService.get_all_accounts(db)

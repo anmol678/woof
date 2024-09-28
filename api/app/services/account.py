@@ -49,6 +49,12 @@ class AccountService:
         return account
 
     @staticmethod
+    async def get_all_accounts(db: AsyncSession) -> list[Account]:
+        async with db.begin():
+            result = await db.execute(select(Account))
+            return result.scalars().all()
+
+    @staticmethod
     async def check_account_number_exists(db: AsyncSession, account_number: str) -> bool:
         result = await db.execute(
             select(Account).where(Account.account_number == account_number).limit(1)
