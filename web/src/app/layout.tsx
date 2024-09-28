@@ -1,5 +1,6 @@
 import type { Metadata } from 'next'
 import { Inter } from 'next/font/google'
+import Link from 'next/link'
 import './globals.css'
 import { ReactQueryClientProvider } from '@/query-provider'
 
@@ -19,7 +20,9 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
               <div className="flex h-16 justify-between">
                 <div className="flex flex-shrink-0 items-center">
-                  <span className="text-2xl font-bold text-orange-500">Woof</span>
+                  <Link href="/">
+                    <span className="text-2xl font-bold text-orange-500">Woof</span>
+                  </Link>
                 </div>
               </div>
             </div>
