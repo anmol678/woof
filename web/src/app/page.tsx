@@ -1,101 +1,132 @@
-import Image from "next/image";
+'use client'
+
+import { useState } from 'react'
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
+import { Customer, Account, CustomerCreate, AccountCreate } from '@/types'
+import { CustomerQuery, AccountQuery, TransferQuery } from '@/queries'
 
 export default function Home() {
-  return (
-    <div className="grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">
-      <main className="flex flex-col gap-8 row-start-2 items-center sm:items-start">
-        <Image
-          className="dark:invert"
-          src="https://nextjs.org/icons/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol className="list-inside list-decimal text-sm text-center sm:text-left font-[family-name:var(--font-geist-mono)]">
-          <li className="mb-2">
-            Get started by editing{" "}
-            <code className="bg-black/[.05] dark:bg-white/[.06] px-1 py-0.5 rounded font-semibold">
-              src/app/page.tsx
-            </code>
-            .
-          </li>
-          <li>Save and see your changes instantly.</li>
-        </ol>
+  const queryClient = useQueryClient()
 
-        <div className="flex gap-4 items-center flex-col sm:flex-row">
-          <a
-            className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="https://nextjs.org/icons/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
-            />
-            Deploy now
-          </a>
-          <a
-            className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:min-w-44"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Read our docs
-          </a>
-        </div>
-      </main>
-      <footer className="row-start-3 flex gap-6 flex-wrap items-center justify-center">
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
+  // Fetch Customers
+  const { data: customers } = useQuery<Customer[]>({
+    queryKey: ['customers'],
+    queryFn: CustomerQuery.getAll
+  })
+
+  const { data: accounts } = useQuery<Account[]>({
+    queryKey: ['accounts'],
+    queryFn: AccountQuery.getAll
+  })
+
+  // Mutations for creating customer and account
+  const createCustomerMutation = useMutation<Customer, Error, CustomerCreate>({
+    mutationFn: CustomerQuery.create,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['customers'] })
+    }
+  })
+
+  const createAccountMutation = useMutation<Account, Error, AccountCreate>({
+    mutationFn: AccountQuery.create,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['accounts'] })
+    }
+  })
+
+  // Handlers
+  const [customerName, setCustomerName] = useState('')
+  const [selectedCustomer, setSelectedCustomer] = useState<string | null>(null)
+  const [initialDeposit, setInitialDeposit] = useState(0)
+
+  const handleCreateCustomer = () => {
+    if (customerName.trim() === '') return
+    createCustomerMutation.mutate({ name: customerName })
+    setCustomerName('')
+  }
+
+  const handleCreateAccount = () => {
+    if (selectedCustomer === null || initialDeposit < 0) return
+    createAccountMutation.mutate({
+      customer_number: selectedCustomer,
+      initial_deposit: initialDeposit
+    })
+    setInitialDeposit(0)
+    setSelectedCustomer(null)
+  }
+
+  return (
+    <div className="p-8">
+      <h1 className="mb-4 text-2xl font-bold">Customer Support Dashboard</h1>
+
+      {/* Create Customer */}
+      <div className="mb-6">
+        <h2 className="mb-2 text-xl font-semibold">Create New Customer</h2>
+        <input
+          type="text"
+          value={customerName}
+          onChange={(e) => setCustomerName(e.target.value)}
+          placeholder="Customer Name"
+          className="mr-2 rounded border p-2"
+        />
+        <button onClick={handleCreateCustomer} className="rounded bg-blue-500 px-4 py-2 text-white">
+          Create Customer
+        </button>
+      </div>
+
+      {/* Create Account */}
+      <div className="mb-6">
+        <h2 className="mb-2 text-xl font-semibold">Create New Account</h2>
+        <select
+          value={selectedCustomer ?? ''}
+          onChange={(e) => setSelectedCustomer(e.target.value)}
+          className="mr-2 rounded border p-2"
         >
-          <Image
-            aria-hidden
-            src="https://nextjs.org/icons/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
-          />
-          Learn
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="https://nextjs.org/icons/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="https://nextjs.org/icons/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
-      </footer>
+          <option value="" disabled>
+            Select Customer
+          </option>
+          {customers?.map((customer) => (
+            <option key={customer.customer_number} value={customer.customer_number}>
+              {customer.name}
+            </option>
+          ))}
+        </select>
+        <input
+          type="number"
+          value={initialDeposit}
+          onChange={(e) => setInitialDeposit(parseFloat(e.target.value))}
+          placeholder="Initial Deposit"
+          className="mr-2 rounded border p-2"
+        />
+        <button onClick={handleCreateAccount} className="rounded bg-green-500 px-4 py-2 text-white">
+          Create Account
+        </button>
+      </div>
+
+      {/* Accounts List */}
+      <div>
+        <h2 className="mb-2 text-xl font-semibold">Accounts</h2>
+        <table className="w-full table-auto">
+          <thead>
+            <tr>
+              <th className="px-4 py-2">Account Number</th>
+              <th className="px-4 py-2">Customer</th>
+              <th className="px-4 py-2">Balance</th>
+            </tr>
+          </thead>
+          <tbody>
+            {accounts?.map((account) => (
+              <tr key={account.id}>
+                <td className="border px-4 py-2">{account.account_number}</td>
+                <td className="border px-4 py-2">
+                  {customers?.find((c) => c.customer_number === account.customer_number)?.name}
+                </td>
+                <td className="border px-4 py-2">${account.balance.toFixed(2)}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
     </div>
-  );
+  )
 }
