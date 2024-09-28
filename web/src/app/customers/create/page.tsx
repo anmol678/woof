@@ -1,14 +1,17 @@
 'use client'
 
 import { useState } from 'react'
+import { useRouter } from 'next/navigation'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { Customer, CustomerCreate } from '@/types'
 import { CustomerQuery } from '@/queries'
-import BackButton from '@/components/BackButton'
+import HomeButton from '@/components/HomeButton'
 import Button from '@/components/Button'
 import Banner from '@/components/Banner'
 
-export default function CreateCustomer() {
+export default function CreateCustomer({ searchParams }: { searchParams: { redirect: string } }) {
+  const router = useRouter()
+
   const queryClient = useQueryClient()
 
   const [name, setName] = useState('')
@@ -25,8 +28,11 @@ export default function CreateCustomer() {
     mutation.mutate(
       { name },
       {
-        onSuccess: () => {
+        onSuccess: (data) => {
           setName('')
+          if (searchParams.redirect === 'create-account') {
+            router.push(`/accounts/create?customerNumber=${data.customer_number}`)
+          }
         }
       }
     )
@@ -34,7 +40,7 @@ export default function CreateCustomer() {
 
   return (
     <div className="mx-auto max-w-md">
-      <BackButton />
+      <HomeButton />
       <h1 className="my-4 text-2xl font-bold">Create New Customer</h1>
       <form onSubmit={handleSubmit} className="space-y-4">
         <div>
@@ -54,7 +60,6 @@ export default function CreateCustomer() {
           Create Customer
         </Button>
       </form>
-
       <div className="mt-6">
         {mutation.isSuccess && (
           <Banner
