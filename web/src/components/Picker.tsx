@@ -28,6 +28,7 @@ export default function Picker<T>({
   const [focusedIndex, setFocusedIndex] = useState(-1)
   const dropdownRef = useRef<HTMLDivElement>(null)
   const optionRefs = useRef<(HTMLDivElement | null)[]>([])
+  const [closeDropdownTimeout, setCloseDropdownTimeout] = useState<NodeJS.Timeout | null>(null)
 
   useEffect(() => {
     if (selectedOption) {
@@ -77,8 +78,12 @@ export default function Picker<T>({
     (value: string) => {
       onSelect(value)
       setIsDropdownOpen(false)
+      if (closeDropdownTimeout) {
+        clearTimeout(closeDropdownTimeout)
+        setCloseDropdownTimeout(null)
+      }
     },
-    [onSelect]
+    [onSelect, closeDropdownTimeout]
   )
 
   const handleInputChange = useCallback(
@@ -118,6 +123,21 @@ export default function Picker<T>({
     [isDropdownOpen, filteredOptions, focusedIndex, handleSelectOption, createNewOption, getOptionValue]
   )
 
+  const handleInputBlur = useCallback(() => {
+    const timeout = setTimeout(() => {
+      setIsDropdownOpen(false)
+    }, 200)
+    setCloseDropdownTimeout(timeout)
+  }, [])
+
+  useEffect(() => {
+    return () => {
+      if (closeDropdownTimeout) {
+        clearTimeout(closeDropdownTimeout)
+      }
+    }
+  }, [closeDropdownTimeout])
+
   const renderOptions = useMemo(
     () =>
       filteredOptions.map((option, index) => (
@@ -128,6 +148,7 @@ export default function Picker<T>({
               optionRefs.current[index] = el
             }
           }}
+          onMouseDown={(e) => e.preventDefault()}
           onClick={() => handleSelectOption(getOptionValue(option))}
           className={cn('cursor-pointer px-3 py-2 hover:bg-gray-100', focusedIndex === index && 'bg-gray-100')}
         >
@@ -145,7 +166,7 @@ export default function Picker<T>({
           value={searchTerm}
           onChange={handleInputChange}
           onFocus={() => setIsDropdownOpen(true)}
-          onBlur={() => setIsDropdownOpen(false)}
+          onBlur={handleInputBlur}
           onKeyDown={handleKeyDown}
           placeholder={placeholder}
           className="w-full"
@@ -164,6 +185,7 @@ export default function Picker<T>({
                     optionRefs.current[filteredOptions.length] = el
                   }
                 }}
+                onMouseDown={(e) => e.preventDefault()}
                 onClick={() => handleSelectOption(createNewOption.value)}
                 className={cn(
                   'cursor-pointer px-3 py-2 hover:bg-gray-100',
