@@ -4,11 +4,13 @@ import { useState } from 'react'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { Customer, CustomerCreate } from '@/types'
 import { CustomerQuery } from '@/queries'
+import BackButton from '@/components/BackButton'
 import Button from '@/components/Button'
 import Banner from '@/components/Banner'
 
 export default function CreateCustomer() {
   const queryClient = useQueryClient()
+
   const [name, setName] = useState('')
 
   const mutation = useMutation<Customer, Error, CustomerCreate>({
@@ -32,7 +34,8 @@ export default function CreateCustomer() {
 
   return (
     <div className="mx-auto max-w-md">
-      <h1 className="mb-4 text-2xl font-bold">Create New Customer</h1>
+      <BackButton />
+      <h1 className="my-4 text-2xl font-bold">Create New Customer</h1>
       <form onSubmit={handleSubmit} className="space-y-4">
         <div>
           <label htmlFor="name" className="mb-1 block">
