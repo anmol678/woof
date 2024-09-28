@@ -56,6 +56,7 @@ export default function CreateCustomer({ searchParams }: { searchParams: { redir
             onChange={(e) => setName(e.target.value)}
             required
             className="w-full rounded-md border px-3 py-2"
+            autoFocus
           />
         </div>
         <Button type="submit" className="w-full" data-style="action" isLoading={mutation.isPending}>

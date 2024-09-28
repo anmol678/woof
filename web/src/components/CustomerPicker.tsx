@@ -1,10 +1,10 @@
 'use client'
 
+import { useState, useRef, useEffect, useMemo, useCallback } from 'react'
 import { useQuery } from '@tanstack/react-query'
 import { useRouter } from 'next/navigation'
 import { Customer } from '@/types'
 import { CustomerQuery } from '@/queries'
-import { useState, useRef, useEffect } from 'react'
 
 interface CustomerPickerProps {
   selectedCustomer: string | null
@@ -29,7 +29,10 @@ export default function CustomerPicker({
     queryFn: CustomerQuery.getAll
   })
 
-  const selectedCustomer = customers?.find((c) => c.customer_number === selectedCustomerNumber)
+  const selectedCustomer = useMemo(
+    () => customers?.find((c) => c.customer_number === selectedCustomerNumber),
+    [customers, selectedCustomerNumber]
+  )
 
   useEffect(() => {
     if (selectedCustomer) {
@@ -38,24 +41,6 @@ export default function CustomerPicker({
       setSearchTerm('')
     }
   }, [selectedCustomer])
-
-  const filteredCustomers =
-    customers?.filter((customer) => customerToString(customer).toLowerCase().includes(searchTerm.toLowerCase())) || []
-
-  const handleSelectCustomer = (customerNumber: string) => {
-    if (customerNumber === 'create-new-customer') {
-      router.push('/customers/create?redirect=create-account')
-    } else {
-      onSelectCustomer(customerNumber)
-    }
-    setIsDropdownOpen(false)
-  }
-
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setSearchTerm(e.target.value)
-    onSelectCustomer(null)
-    setIsDropdownOpen(true)
-  }
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -69,6 +54,34 @@ export default function CustomerPicker({
       document.removeEventListener('mousedown', handleClickOutside)
     }
   }, [])
+
+  const filteredCustomers = useMemo(
+    () =>
+      customers?.filter((customer) => customerToString(customer).toLowerCase().includes(searchTerm.toLowerCase())) ||
+      [],
+    [customers, searchTerm]
+  )
+
+  const handleSelectCustomer = useCallback(
+    (customerNumber: string) => {
+      if (customerNumber === 'create-new-customer') {
+        router.push('/customers/create?redirect=create-account')
+      } else {
+        onSelectCustomer(customerNumber)
+      }
+      setIsDropdownOpen(false)
+    },
+    [router, onSelectCustomer]
+  )
+
+  const handleInputChange = useCallback(
+    (e: React.ChangeEvent<HTMLInputElement>) => {
+      setSearchTerm(e.target.value)
+      onSelectCustomer(null)
+      setIsDropdownOpen(true)
+    },
+    [onSelectCustomer]
+  )
 
   return (
     <div className="relative space-y-4" ref={dropdownRef}>
