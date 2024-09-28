@@ -7,7 +7,7 @@ import { AccountQuery } from '@/queries'
 import BackButton from '@/components/BackButton'
 import Button from '@/components/Button'
 import Banner from '@/components/Banner'
-import CustomerPicker from '@/components/CustomerPicker'
+import CustomerPicker from '@/components/customer/CustomerPicker'
 
 export default function CreateAccount({ searchParams }: { searchParams: { customerNumber: string } }) {
   const queryClient = useQueryClient()

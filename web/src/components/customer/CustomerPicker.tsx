@@ -37,7 +37,7 @@ export default function CustomerPicker({
 
   const handleSelectCustomer = (customerNumber: string | null) => {
     if (customerNumber === createCustomerId) {
-      router.push('/customers/create?redirect=create-account')
+      router.push(`/customers/create?redirect=create-account`)
     } else {
       onSelectCustomer(customerNumber)
     }
