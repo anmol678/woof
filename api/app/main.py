@@ -12,7 +12,7 @@ from app.utils.logger import logger
 app = FastAPI()
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=[os.getenv("WEBAPP_URL")],
+    allow_origins=[os.getenv("WEB_APP_URL")],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
