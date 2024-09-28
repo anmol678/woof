@@ -31,7 +31,11 @@ export default function Picker<T>({
 
   useEffect(() => {
     if (selectedOption) {
-      setSearchTerm(getOptionLabel(options.find((option) => getOptionValue(option) === selectedOption)!))
+      const selected = options.find((option) => getOptionValue(option) === selectedOption)
+      if (selected) {
+        setSearchTerm(getOptionLabel(selected))
+        setIsDropdownOpen(false)
+      }
     } else {
       setSearchTerm('')
     }
@@ -141,10 +145,11 @@ export default function Picker<T>({
           value={searchTerm}
           onChange={handleInputChange}
           onFocus={() => setIsDropdownOpen(true)}
+          onBlur={() => setIsDropdownOpen(false)}
           onKeyDown={handleKeyDown}
           placeholder={placeholder}
           className="w-full"
-          autoFocus
+          autoFocus={!selectedOption}
         />
         {isDropdownOpen && (
           <div

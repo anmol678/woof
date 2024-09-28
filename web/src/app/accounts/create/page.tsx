@@ -71,6 +71,7 @@ export default function CreateAccount({ searchParams }: { searchParams: { custom
             min="0"
             step="0.01"
             className="w-full"
+            autoFocus={!selectedCustomer}
           />
         </div>
         <Button type="submit" className="w-full" data-style="action">
