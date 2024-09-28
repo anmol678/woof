@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { Account, AccountCreate } from '@/types'
 import { AccountQuery } from '@/queries'
-import HomeButton from '@/components/HomeButton'
+import BackButton from '@/components/BackButton'
 import Button from '@/components/Button'
 import Banner from '@/components/Banner'
 import CustomerPicker from '@/components/CustomerPicker'
@@ -49,10 +49,10 @@ export default function CreateAccount({ searchParams }: { searchParams: { custom
 
   return (
     <div className="mx-auto max-w-md">
-      <HomeButton />
+      <BackButton route="/" />
       <h1 className="mb-4 text-2xl font-bold">Create New Account</h1>
       <form onSubmit={handleSubmit} className="space-y-4">
-        <div className="mb-6">
+        <div>
           <label htmlFor="customerNumber" className="mb-2 block">
             Pick a customer
           </label>

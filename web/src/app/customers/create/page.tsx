@@ -5,7 +5,7 @@ import { useRouter } from 'next/navigation'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { Customer, CustomerCreate } from '@/types'
 import { CustomerQuery } from '@/queries'
-import HomeButton from '@/components/HomeButton'
+import BackButton from '@/components/BackButton'
 import Button from '@/components/Button'
 import Banner from '@/components/Banner'
 
@@ -38,9 +38,11 @@ export default function CreateCustomer({ searchParams }: { searchParams: { redir
     )
   }
 
+  const backRoute = searchParams.redirect === 'create-account' ? '/accounts/create' : undefined
+
   return (
     <div className="mx-auto max-w-md">
-      <HomeButton />
+      <BackButton route={backRoute} />
       <h1 className="my-4 text-2xl font-bold">Create New Customer</h1>
       <form onSubmit={handleSubmit} className="space-y-4">
         <div>
