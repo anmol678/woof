@@ -5,6 +5,8 @@ import { useQuery } from '@tanstack/react-query'
 import { useRouter } from 'next/navigation'
 import { Customer } from '@/types'
 import { CustomerQuery } from '@/queries'
+import Banner from '@/components/Banner'
+import Loader from '@/components/Loader'
 
 interface CustomerPickerProps {
   selectedCustomer: string | null
@@ -24,7 +26,13 @@ export default function CustomerPicker({
   const [isDropdownOpen, setIsDropdownOpen] = useState(false)
   const dropdownRef = useRef<HTMLDivElement>(null)
 
-  const { data: customers, isSuccess } = useQuery<Customer[]>({
+  const {
+    data: customers,
+    isSuccess,
+    isError,
+    error,
+    isLoading
+  } = useQuery<Customer[]>({
     queryKey: ['customers'],
     queryFn: CustomerQuery.getAll
   })
@@ -83,8 +91,27 @@ export default function CustomerPicker({
     [onSelectCustomer]
   )
 
+  const filteredCustomerOptions = useMemo(
+    () =>
+      filteredCustomers.map((customer) => (
+        <div
+          key={customer.id}
+          onClick={() => handleSelectCustomer(customer.customer_number)}
+          className="cursor-pointer px-3 py-2 hover:bg-gray-100"
+        >
+          {customerToString(customer)}
+        </div>
+      )),
+    [filteredCustomers, handleSelectCustomer]
+  )
+
   return (
     <div className="relative space-y-4" ref={dropdownRef}>
+      {isLoading && (
+        <div className="w-full rounded border bg-background p-2.5">
+          <Loader data-style="accent" />
+        </div>
+      )}
       {isSuccess && (
         <div>
           <input
@@ -98,15 +125,7 @@ export default function CustomerPicker({
           />
           {isDropdownOpen && (
             <div className="absolute z-10 mt-1 max-h-60 w-full overflow-auto rounded-md border bg-white shadow-lg">
-              {filteredCustomers.map((customer) => (
-                <div
-                  key={customer.id}
-                  onClick={() => handleSelectCustomer(customer.customer_number)}
-                  className="cursor-pointer px-3 py-2 hover:bg-gray-100"
-                >
-                  {customerToString(customer)}
-                </div>
-              ))}
+              {filteredCustomerOptions}
               <div
                 onClick={() => handleSelectCustomer('create-new-customer')}
                 className="cursor-pointer px-3 py-2 hover:bg-gray-100"
@@ -117,6 +136,7 @@ export default function CustomerPicker({
           )}
         </div>
       )}
+      {isError && <Banner type="error" message={error?.message} />}
     </div>
   )
 }
