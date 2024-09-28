@@ -6,7 +6,7 @@ export default function Loader({ className }: { className?: string }) {
       <div className="loader h-5 w-5 rounded-full border-2 border-t-2 border-gray-200 ease-linear"></div>
       <style jsx>{`
         .loader {
-          border-top-color: #3498db;
+          border-top-color: transparent;
           animation: spin 1s linear infinite;
         }
         @keyframes spin {
