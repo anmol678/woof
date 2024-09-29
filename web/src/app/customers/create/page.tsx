@@ -49,7 +49,7 @@ export default function CreateCustomer({ searchParams }: CreateCustomerProps) {
       <BackButton />
       <h1>Create New Customer</h1>
       <form onSubmit={handleSubmit}>
-        <div className="mb-8">
+        <div>
           <label htmlFor="name">Name</label>
           <input
             type="text"

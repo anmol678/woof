@@ -143,3 +143,7 @@ h2 {
 form {
   @apply mb-6 space-y-4;
 }
+
+form > button {
+  @apply mt-6 !important;
+}
