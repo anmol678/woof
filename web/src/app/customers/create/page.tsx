@@ -25,8 +25,6 @@ export default function CreateCustomer({ searchParams }: CreateCustomerProps) {
     invalidateQuery: ['customers']
   })
 
-  const isRedirect = Object.values(Routes).includes(searchParams.redirect as Routes)
-
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
     mutation.mutate(
@@ -34,7 +32,8 @@ export default function CreateCustomer({ searchParams }: CreateCustomerProps) {
       {
         onSuccess: (data: Customer) => {
           setName('')
-          const redirect = isRedirect ? searchParams.redirect : Routes.CUSTOMER_DETAILS
+          const isValidRedirect = Object.values(Routes).includes(searchParams.redirect as Routes)
+          const redirect = isValidRedirect ? searchParams.redirect : Routes.CUSTOMER_DETAILS
           redirectTo(redirect as Routes, {
             [Params.CUSTOMER_NUMBER]: data.customer_number,
             [Params.FROM]: Routes.CREATE_CUSTOMER

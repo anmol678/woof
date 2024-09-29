@@ -36,8 +36,8 @@ export default function CustomerPicker({ selectedCustomer, onSelectCustomer }: C
   const handleSelectCustomer = (customerNumber: string | null) => {
     if (customerNumber === createCustomerId) {
       const route = window.location.pathname as Routes
-      const isRedirect = Object.values(Routes).includes(route)
-      redirectToCreateCustomer(isRedirect ? route : undefined)
+      const isValidRedirect = Object.values(Routes).includes(route)
+      redirectToCreateCustomer(isValidRedirect ? route : undefined)
     } else {
       onSelectCustomer(customerNumber)
     }

@@ -25,7 +25,7 @@ export default function CreateAccount({ searchParams }: CreateAccountProps) {
   const [initialDeposit, setInitialDeposit] = useState('')
   const initialDepositRef = useRef<HTMLInputElement>(null)
 
-  const isRedirect = Object.values(Routes).includes(searchParams.redirect as Routes)
+  const isValidRedirect = Object.values(Routes).includes(searchParams.redirect as Routes)
 
   useEffect(() => {
     if (selectedCustomer) {
@@ -59,7 +59,7 @@ export default function CreateAccount({ searchParams }: CreateAccountProps) {
     mutation.mutate(accountCreate, {
       onSuccess: (data: Account) => {
         resetForm()
-        const redirect = isRedirect ? searchParams.redirect : Routes.CUSTOMER_DETAILS
+        const redirect = isValidRedirect ? searchParams.redirect : Routes.CUSTOMER_DETAILS
         redirectTo(redirect as Routes, {
           [Params.CUSTOMER_NUMBER]: data.customer_number,
           [Params.FROM]: Routes.CREATE_ACCOUNT
@@ -70,7 +70,7 @@ export default function CreateAccount({ searchParams }: CreateAccountProps) {
 
   return (
     <div className="mx-auto max-w-md">
-      <BackButton route={isRedirect ? undefined : '/'} />
+      <BackButton route={isValidRedirect ? undefined : '/'} />
       <h1>Create New Account</h1>
       <form onSubmit={handleSubmit}>
         <div>
