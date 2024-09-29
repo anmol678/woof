@@ -20,8 +20,8 @@ export default function CustomerDetails({ customerNumber }: { customerNumber: st
 
   return (
     <div className="space-y-6">
-      <div className="rounded-md bg-white p-4 shadow">
-        <h2 className="mb-2 text-xl font-semibold">Customer Information</h2>
+      <div className="card">
+        <h2>Customer Information</h2>
         {isLoading && <Loader data-style="accent" />}
         {isSuccess && <p className="text-lg font-medium">Name: {customerDetails.name}</p>}
         {isError && <Banner type="error" message={error?.message} />}

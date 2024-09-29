@@ -6,7 +6,7 @@ import { Account } from '@/types'
 import { AccountQuery } from '@/queries'
 import Banner from '@/components/Banner'
 import Loader from '@/components/Loader'
-import PATHS from '@/utils/paths'
+import Routes from '@/utils/routes'
 
 export default function AccountDetails({ accountNumber }: { accountNumber: string }) {
   const router = useRouter()
@@ -23,14 +23,14 @@ export default function AccountDetails({ accountNumber }: { accountNumber: strin
   })
 
   const onViewCustomer = (customerNumber: string) => {
-    router.push(`${PATHS.CUSTOMER_DETAILS}?customerNumber=${customerNumber}`)
+    router.push(`${Routes.CUSTOMER_DETAILS}?customerNumber=${customerNumber}`)
   }
 
   return (
     <div className="space-y-6">
-      <div className="rounded-md bg-white p-4 shadow">
+      <div className="card">
         <div className="flex items-center justify-between">
-          <h2 className="mb-2 text-xl font-semibold">Account Balance</h2>
+          <h2>Account Balance</h2>
           {isSuccess && (
             <span className="link text-sm" onClick={() => onViewCustomer(accountDetails.customer_number)}>
               View Customer Details

@@ -9,7 +9,7 @@ import BackButton from '@/components/BackButton'
 import Button from '@/components/Button'
 import Banner from '@/components/Banner'
 import CustomerPicker from '@/components/customer/CustomerPicker'
-import PATHS from '@/utils/paths'
+import Routes from '@/utils/routes'
 
 export default function CreateAccount({
   searchParams
@@ -24,7 +24,7 @@ export default function CreateAccount({
   const [initialDeposit, setInitialDeposit] = useState('')
   const initialDepositRef = useRef<HTMLInputElement>(null)
 
-  const isRedirect = Object.values(PATHS).includes(searchParams.redirect as PATHS)
+  const isRedirect = Object.values(Routes).includes(searchParams.redirect as Routes)
 
   useEffect(() => {
     if (searchParams.customerNumber) {
@@ -55,7 +55,7 @@ export default function CreateAccount({
           onSuccess: (data) => {
             setSelectedCustomer(null)
             setInitialDeposit('')
-            const redirect = isRedirect ? searchParams.redirect : PATHS.CUSTOMER_DETAILS
+            const redirect = isRedirect ? searchParams.redirect : Routes.CUSTOMER_DETAILS
             router.push(`${redirect}?customerNumber=${data.customer_number}&from=create-account`)
           }
         }
@@ -79,7 +79,7 @@ export default function CreateAccount({
   return (
     <div className="mx-auto max-w-md">
       <BackButton route={backRoute} />
-      <h1 className="mb-4 text-2xl font-bold">Create New Account</h1>
+      <h1>Create New Account</h1>
       <form onSubmit={handleSubmit} className="space-y-4">
         <div>
           <label htmlFor="customerNumber" className="mb-2 block">
@@ -88,7 +88,7 @@ export default function CreateAccount({
           <CustomerPicker selectedCustomer={selectedCustomer} onSelectCustomer={handleCustomerSelect} />
         </div>
         <div>
-          <label htmlFor="initialDeposit" className="mb-1 block">
+          <label htmlFor="initialDeposit" className="mb-2 block">
             Initial Deposit
           </label>
           <input

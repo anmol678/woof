@@ -36,7 +36,7 @@ export default function AccountPicker({
   return (
     <div className="space-y-4">
       {isLoading ? (
-        <div className="w-full rounded border bg-background p-2.5">
+        <div className="w-full rounded-md border bg-background p-2.5">
           <Loader data-style="accent" />
         </div>
       ) : null}

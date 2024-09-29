@@ -1,4 +1,4 @@
-enum PATHS {
+enum Routes {
   CREATE_ACCOUNT = '/accounts/create',
   CREATE_CUSTOMER = '/customers/create',
   CUSTOMER_DETAILS = '/customers',
@@ -6,4 +6,4 @@ enum PATHS {
   TRANSFER = '/transfer'
 }
 
-export default PATHS
+export default Routes

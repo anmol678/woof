@@ -9,7 +9,7 @@ import BackButton from '@/components/BackButton'
 import AccountPicker from '@/components/account/AccountPicker'
 import Button from '@/components/Button'
 import Banner from '@/components/Banner'
-import PATHS from '@/utils/paths'
+import Routes from '@/utils/routes'
 
 export default function TransferPage({ searchParams }: { searchParams: { accountFrom: string; accountTo: string } }) {
   const router = useRouter()
@@ -56,7 +56,7 @@ export default function TransferPage({ searchParams }: { searchParams: { account
   }
 
   const onViewAccount = (accountNumber: string) => {
-    router.push(`${PATHS.ACCOUNT_DETAILS}?accountNumber=${accountNumber}`)
+    router.push(`${Routes.ACCOUNT_DETAILS}?accountNumber=${accountNumber}`)
   }
 
   const setAccount = (
@@ -70,20 +70,18 @@ export default function TransferPage({ searchParams }: { searchParams: { account
     } else {
       urlSearchParams.delete(paramName)
     }
-    router.replace(`${PATHS.TRANSFER}?${urlSearchParams.toString()}`)
+    router.replace(`${Routes.TRANSFER}?${urlSearchParams.toString()}`)
     setter(accountNumber)
   }
 
   return (
     <div className="mx-auto max-w-md">
       <BackButton />
-      <h1 className="mb-4 text-2xl font-bold">Transfer Funds</h1>
+      <h1>Transfer Funds</h1>
       <form onSubmit={handleSubmit} className="space-y-4">
         <div>
           <div className="mb-2 flex items-center justify-between">
-            <label htmlFor="fromAccount" className="mb-1 block">
-              From Account
-            </label>
+            <label htmlFor="fromAccount">From Account</label>
             {fromAccount && (
               <span className="link text-sm" onClick={() => onViewAccount(fromAccount)}>
                 View Details
@@ -97,9 +95,7 @@ export default function TransferPage({ searchParams }: { searchParams: { account
         </div>
         <div>
           <div className="mb-2 flex items-center justify-between">
-            <label htmlFor="toAccount" className="mb-1 block">
-              To Account
-            </label>
+            <label htmlFor="toAccount">To Account</label>
             {toAccount && (
               <span className="link text-sm" onClick={() => onViewAccount(toAccount)}>
                 View Details
@@ -113,9 +109,7 @@ export default function TransferPage({ searchParams }: { searchParams: { account
           />
         </div>
         <div>
-          <label htmlFor="amount" className="mb-1 block">
-            Amount
-          </label>
+          <label htmlFor="amount">Amount</label>
           <input
             type="number"
             id="amount"
@@ -124,7 +118,7 @@ export default function TransferPage({ searchParams }: { searchParams: { account
             required
             min="0.01"
             step="0.01"
-            className="w-full rounded-md border px-3 py-2"
+            className="w-full"
           />
         </div>
         <Button type="submit" className="w-full" data-style="primary">

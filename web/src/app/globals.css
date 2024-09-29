@@ -55,7 +55,11 @@
   }
 
   .back-button {
-    @apply hover-transition mb-4 text-sm text-gray-500 hover:text-blue-500 hover:underline;
+    @apply link mb-4 text-sm text-gray-600;
+  }
+
+  .back-button:hover svg {
+    @apply text-blue-600;
   }
 
   .banner {
@@ -79,7 +83,11 @@
   }
 
   .link {
-    @apply cursor-pointer text-blue-500 hover:text-blue-600 hover:underline;
+    @apply hover-transition cursor-pointer text-blue-500 hover:text-blue-600 hover:underline;
+  }
+
+  .card {
+    @apply rounded-md bg-background p-4 shadow;
   }
 }
 
@@ -118,4 +126,16 @@ body {
 
 input {
   @apply rounded-md border px-3 py-2;
+}
+
+label {
+  @apply mb-2 block;
+}
+
+h1 {
+  @apply mb-4 text-2xl font-bold text-gray-700;
+}
+
+h2 {
+  @apply mb-2 text-xl font-semibold text-gray-700;
 }

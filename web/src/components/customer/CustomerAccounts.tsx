@@ -8,7 +8,7 @@ import { Account } from '@/types'
 import Loader from '@/components/Loader'
 import Banner from '@/components/Banner'
 import Button from '@/components/Button'
-import PATHS from '@/utils/paths'
+import Routes from '@/utils/routes'
 
 export default function CustomerAccounts({ customerNumber }: { customerNumber: string }) {
   const router = useRouter()
@@ -25,19 +25,19 @@ export default function CustomerAccounts({ customerNumber }: { customerNumber: s
   })
 
   const onCreateAccount = useCallback(() => {
-    router.push(`${PATHS.CREATE_ACCOUNT}?customerNumber=${customerNumber}&redirect=${PATHS.CUSTOMER_DETAILS}`)
+    router.push(`${Routes.CREATE_ACCOUNT}?customerNumber=${customerNumber}&redirect=${Routes.CUSTOMER_DETAILS}`)
   }, [router, customerNumber])
 
   const onViewAccount = useCallback(
     (accountNumber: string) => {
-      router.push(`${PATHS.ACCOUNT_DETAILS}?accountNumber=${accountNumber}`)
+      router.push(`${Routes.ACCOUNT_DETAILS}?accountNumber=${accountNumber}`)
     },
     [router]
   )
 
   const onTransferFromAccount = useCallback(
     (accountNumber: string) => {
-      router.push(`${PATHS.TRANSFER}?accountFrom=${accountNumber}`)
+      router.push(`${Routes.TRANSFER}?accountFrom=${accountNumber}`)
     },
     [router]
   )
@@ -65,8 +65,8 @@ export default function CustomerAccounts({ customerNumber }: { customerNumber: s
   )
 
   return (
-    <div className="rounded-md bg-background p-4 shadow">
-      <h2 className="mb-2 text-xl font-semibold">Accounts</h2>
+    <div className="card">
+      <h2>Accounts</h2>
       {isLoading && <Loader data-style="accent" />}
       {isSuccess && (
         <>

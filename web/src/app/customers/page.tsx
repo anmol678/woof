@@ -32,7 +32,7 @@ export default function CustomerPage({ searchParams }: { searchParams: { custome
   return (
     <div className="mx-auto max-w-4xl">
       <BackButton route={backRoute} />
-      <h1 className="mb-4 text-2xl font-bold">Customer Details</h1>
+      <h1>Customer Details</h1>
       <form className="mb-6">
         <CustomerPicker selectedCustomer={customerNumber} onSelectCustomer={handleCustomerChange} />
       </form>

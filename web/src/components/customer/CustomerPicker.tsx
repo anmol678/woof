@@ -7,7 +7,7 @@ import { CustomerQuery } from '@/queries'
 import Banner from '@/components/Banner'
 import Loader from '@/components/Loader'
 import Picker from '@/components/Picker'
-import PATHS from '@/utils/paths'
+import Routes from '@/utils/routes'
 
 interface CustomerPickerProps {
   selectedCustomer: string | null
@@ -39,10 +39,10 @@ export default function CustomerPicker({
   const handleSelectCustomer = (customerNumber: string | null) => {
     if (customerNumber === createCustomerId) {
       const redirect = window.location.pathname
-      if (Object.values(PATHS).includes(redirect as PATHS)) {
-        router.push(`${PATHS.CREATE_CUSTOMER}?redirect=${redirect}`)
+      if (Object.values(Routes).includes(redirect as Routes)) {
+        router.push(`${Routes.CREATE_CUSTOMER}?redirect=${redirect}`)
       } else {
-        router.push(PATHS.CREATE_CUSTOMER)
+        router.push(Routes.CREATE_CUSTOMER)
       }
     } else {
       onSelectCustomer(customerNumber)
@@ -52,7 +52,7 @@ export default function CustomerPicker({
   return (
     <div className="space-y-4">
       {isLoading ? (
-        <div className="w-full rounded border bg-background p-2.5">
+        <div className="w-full rounded-md border bg-background p-2.5">
           <Loader data-style="accent" />
         </div>
       ) : null}
