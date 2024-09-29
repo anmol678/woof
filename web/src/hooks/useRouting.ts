@@ -34,7 +34,11 @@ export function useAccountRouting() {
     redirectTo(Routes.ACCOUNT_DETAILS, { [Params.ACCOUNT_NUMBER]: accountNumber })
   }
 
-  return { redirectToAccountDetails }
+  const redirectToCreateAccount = (customerNumber: string, redirect: Routes) => {
+    redirectTo(Routes.CREATE_ACCOUNT, { [Params.CUSTOMER_NUMBER]: customerNumber, [Params.REDIRECT]: redirect })
+  }
+
+  return { redirectToAccountDetails, redirectToCreateAccount }
 }
 
 export function useCustomerRouting() {
@@ -44,7 +48,11 @@ export function useCustomerRouting() {
     redirectTo(Routes.CUSTOMER_DETAILS, { [Params.CUSTOMER_NUMBER]: customerNumber })
   }
 
-  return { redirectToCustomerDetails }
+  const redirectToCreateCustomer = (redirect?: Routes) => {
+    redirectTo(Routes.CREATE_CUSTOMER, { ...(redirect && { [Params.REDIRECT]: redirect }) })
+  }
+
+  return { redirectToCustomerDetails, redirectToCreateCustomer }
 }
 
 export function useTransferRouting() {
