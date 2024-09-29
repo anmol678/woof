@@ -46,10 +46,7 @@ export default function CustomerAccounts({ customerNumber }: { customerNumber: s
     () =>
       accounts?.map((account) => (
         <tr key={account.id} className="border-b">
-          <td
-            className="cursor-pointer py-2 text-blue-500 hover:text-blue-600 hover:underline"
-            onClick={() => onViewAccount(account.account_number)}
-          >
+          <td className="link py-2" onClick={() => onViewAccount(account.account_number)}>
             {account.account_number}
           </td>
           <td className="py-2 capitalize">${account.balance.toFixed(2)}</td>

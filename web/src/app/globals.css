@@ -77,6 +77,10 @@
   .loader[data-style='accent'] {
     @apply border-blue-500 border-t-transparent;
   }
+
+  .link {
+    @apply cursor-pointer text-blue-500 hover:text-blue-600 hover:underline;
+  }
 }
 
 @layer utilities {

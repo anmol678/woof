@@ -41,16 +41,10 @@ export default function AccountTransfers({ accountNumber }: { accountNumber: str
     return transfers?.map((transfer) => (
       <tr key={transfer.id} className="border-b">
         <td className="py-2">{formatDate(transfer.timestamp)}</td>
-        <td
-          className="cursor-pointer py-2 text-blue-500 hover:text-blue-600 hover:underline"
-          onClick={() => onViewAccount(transfer.sender_account_number)}
-        >
+        <td className="link py-2" onClick={() => onViewAccount(transfer.sender_account_number)}>
           {transfer.sender_account_number}
         </td>
-        <td
-          className="cursor-pointer py-2 text-blue-500 hover:text-blue-600 hover:underline"
-          onClick={() => onViewAccount(transfer.receiver_account_number)}
-        >
+        <td className="link py-2" onClick={() => onViewAccount(transfer.receiver_account_number)}>
           {transfer.receiver_account_number}
         </td>
         <td
