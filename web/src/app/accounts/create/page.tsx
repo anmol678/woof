@@ -81,7 +81,7 @@ export default function CreateAccount({
             value={initialDeposit}
             onChange={(e) => setInitialDeposit(e.target.value)}
             required
-            min="0"
+            min="0.01"
             step="0.01"
             className="w-full"
             autoFocus={!selectedCustomer}
