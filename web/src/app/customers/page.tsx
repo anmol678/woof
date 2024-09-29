@@ -7,7 +7,7 @@ import CustomerPicker from '@/components/customer/CustomerPicker'
 import CustomerDetails from '@/components/customer/CustomerDetails'
 import CustomerAccounts from '@/components/customer/CustomerAccounts'
 
-export default function CustomerPage({ searchParams }: { searchParams: { customerNumber: string } }) {
+export default function CustomerPage({ searchParams }: { searchParams: { customerNumber: string; from: string } }) {
   const router = useRouter()
 
   const [customerNumber, setCustomerNumber] = useState<string | null>(null)
@@ -27,9 +27,11 @@ export default function CustomerPage({ searchParams }: { searchParams: { custome
     setCustomerNumber(customerNumber)
   }
 
+  const backRoute = searchParams.from ? '/' : undefined
+
   return (
     <div className="mx-auto max-w-4xl">
-      <BackButton />
+      <BackButton route={backRoute} />
       <h1 className="mb-4 text-2xl font-bold">Customer Details</h1>
       <form className="mb-6">
         <CustomerPicker selectedCustomer={customerNumber} onSelectCustomer={handleCustomerChange} />

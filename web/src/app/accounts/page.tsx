@@ -8,7 +8,7 @@ import AccountDetails from '@/components/account/AccountDetails'
 import AccountTransfers from '@/components/account/AccountTransfers'
 import PATHS from '@/utils/paths'
 
-export default function AccountPage({ searchParams }: { searchParams: { accountNumber: string } }) {
+export default function AccountPage({ searchParams }: { searchParams: { accountNumber: string; from: string } }) {
   const router = useRouter()
 
   const [accountNumber, setAccountNumber] = useState<string | null>(null)
@@ -28,9 +28,11 @@ export default function AccountPage({ searchParams }: { searchParams: { accountN
     setAccountNumber(accountNumber)
   }
 
+  const backRoute = searchParams.from ? '/' : undefined
+
   return (
     <div className="mx-auto max-w-4xl">
-      <BackButton />
+      <BackButton route={backRoute} />
       <h1 className="mb-4 text-2xl font-bold">Account Details</h1>
       <form className="mb-6">
         <AccountPicker selectedAccount={accountNumber} onSelectAccount={handleAccountChange} />

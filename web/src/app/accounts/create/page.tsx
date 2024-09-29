@@ -52,7 +52,7 @@ export default function CreateAccount({
           setSelectedCustomer(null)
           setInitialDeposit('')
           const redirect = isRedirect ? searchParams.redirect : PATHS.CUSTOMER_DETAILS
-          router.push(`${redirect}?customerNumber=${data.customer_number}`)
+          router.push(`${redirect}?customerNumber=${data.customer_number}&from=create-account`)
         }
       }
     )

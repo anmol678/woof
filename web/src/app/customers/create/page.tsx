@@ -34,17 +34,15 @@ export default function CreateCustomer({ searchParams }: { searchParams: { redir
         onSuccess: (data) => {
           setName('')
           const redirect = isRedirect ? searchParams.redirect : PATHS.CUSTOMER_DETAILS
-          router.push(`${redirect}?customerNumber=${data.customer_number}`)
+          router.push(`${redirect}?customerNumber=${data.customer_number}&from=create-customer`)
         }
       }
     )
   }
 
-  const backRoute = isRedirect ? searchParams.redirect : undefined
-
   return (
     <div className="mx-auto max-w-md">
-      <BackButton route={backRoute} />
+      <BackButton />
       <h1 className="my-4 text-2xl font-bold">Create New Customer</h1>
       <form onSubmit={handleSubmit} className="space-y-4">
         <div>
