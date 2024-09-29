@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef, useCallback } from 'react'
 import { useRouter } from 'next/navigation'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { Account, AccountCreate } from '@/types'
@@ -10,6 +10,7 @@ import Button from '@/components/Button'
 import Banner from '@/components/Banner'
 import CustomerPicker from '@/components/customer/CustomerPicker'
 import PATHS from '@/utils/paths'
+
 export default function CreateAccount({
   searchParams
 }: {
@@ -21,12 +22,14 @@ export default function CreateAccount({
 
   const [selectedCustomer, setSelectedCustomer] = useState<string | null>(null)
   const [initialDeposit, setInitialDeposit] = useState('')
+  const initialDepositRef = useRef<HTMLInputElement>(null)
 
   const isRedirect = Object.values(PATHS).includes(searchParams.redirect as PATHS)
 
   useEffect(() => {
     if (searchParams.customerNumber) {
       setSelectedCustomer(searchParams.customerNumber)
+      initialDepositRef.current?.focus()
     }
   }, [searchParams.customerNumber])
 
@@ -37,26 +40,39 @@ export default function CreateAccount({
     }
   })
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault()
+  const handleSubmit = useCallback(
+    async (e: React.FormEvent) => {
+      e.preventDefault()
 
-    if (selectedCustomer === null) {
-      alert('Select a customer')
-      return
-    }
-
-    mutation.mutate(
-      { customer_number: selectedCustomer, initial_deposit: parseFloat(initialDeposit) },
-      {
-        onSuccess: (data) => {
-          setSelectedCustomer(null)
-          setInitialDeposit('')
-          const redirect = isRedirect ? searchParams.redirect : PATHS.CUSTOMER_DETAILS
-          router.push(`${redirect}?customerNumber=${data.customer_number}&from=create-account`)
-        }
+      if (selectedCustomer === null) {
+        alert('Select a customer')
+        return
       }
-    )
-  }
+
+      mutation.mutate(
+        { customer_number: selectedCustomer, initial_deposit: parseFloat(initialDeposit) },
+        {
+          onSuccess: (data) => {
+            setSelectedCustomer(null)
+            setInitialDeposit('')
+            const redirect = isRedirect ? searchParams.redirect : PATHS.CUSTOMER_DETAILS
+            router.push(`${redirect}?customerNumber=${data.customer_number}&from=create-account`)
+          }
+        }
+      )
+    },
+    [selectedCustomer, initialDeposit, mutation, isRedirect, searchParams, router]
+  )
+
+  const handleCustomerSelect = useCallback(
+    (customerNumber: string | null) => {
+      setSelectedCustomer(customerNumber)
+      if (customerNumber) {
+        initialDepositRef.current?.focus()
+      }
+    },
+    [initialDepositRef]
+  )
 
   const backRoute = isRedirect ? undefined : '/'
 
@@ -69,13 +85,14 @@ export default function CreateAccount({
           <label htmlFor="customerNumber" className="mb-2 block">
             Pick a customer
           </label>
-          <CustomerPicker selectedCustomer={selectedCustomer} onSelectCustomer={setSelectedCustomer} />
+          <CustomerPicker selectedCustomer={selectedCustomer} onSelectCustomer={handleCustomerSelect} />
         </div>
         <div>
           <label htmlFor="initialDeposit" className="mb-1 block">
             Initial Deposit
           </label>
           <input
+            ref={initialDepositRef}
             type="number"
             id="initialDeposit"
             value={initialDeposit}
@@ -84,7 +101,6 @@ export default function CreateAccount({
             min="0.01"
             step="0.01"
             className="w-full"
-            autoFocus={!selectedCustomer}
           />
         </div>
         <Button type="submit" className="w-full" data-style="action">

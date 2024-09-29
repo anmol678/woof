@@ -89,11 +89,13 @@ export default function Picker<T>({
   const handleInputChange = useCallback(
     (e: React.ChangeEvent<HTMLInputElement>) => {
       setSearchTerm(e.target.value)
-      onSelect(null)
+      if (selectedOption) {
+        onSelect(null)
+      }
       setIsDropdownOpen(true)
       setFocusedIndex(-1)
     },
-    [onSelect]
+    [onSelect, selectedOption]
   )
 
   const handleKeyDown = useCallback(
