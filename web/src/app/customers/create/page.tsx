@@ -2,12 +2,12 @@
 
 import { useState } from 'react'
 import { useRouting } from '@/hooks/useRouting'
+import { useAlerts } from '@/contexts/alert'
 import { useMutationHandler } from '@/hooks/useMutationHandler'
 import { Customer, CustomerCreate } from '@/types'
 import { CustomerQuery } from '@/queries'
 import BackButton from '@/components/BackButton'
 import Button from '@/components/Button'
-import Banner from '@/components/Banner'
 import Routes from '@/utils/routes'
 import Params from '@/utils/params'
 
@@ -17,6 +17,8 @@ interface CreateCustomerProps {
 
 export default function CreateCustomer({ searchParams }: CreateCustomerProps) {
   const { redirectTo } = useRouting()
+
+  const { addAlert } = useAlerts()
 
   const [name, setName] = useState('')
 
@@ -32,12 +34,16 @@ export default function CreateCustomer({ searchParams }: CreateCustomerProps) {
       {
         onSuccess: (data: Customer) => {
           setName('')
+          addAlert('success', `Customer created: ${data.customer_number} - ${data.name}`)
           const isValidRedirect = Object.values(Routes).includes(searchParams.redirect as Routes)
           const redirect = isValidRedirect ? searchParams.redirect : Routes.CUSTOMER_DETAILS
           redirectTo(redirect as Routes, {
             [Params.CUSTOMER_NUMBER]: data.customer_number,
             [Params.FROM]: Routes.CREATE_CUSTOMER
           })
+        },
+        onError: (error: Error) => {
+          addAlert('error', error.message)
         }
       }
     )
@@ -64,15 +70,6 @@ export default function CreateCustomer({ searchParams }: CreateCustomerProps) {
           Create Customer
         </Button>
       </form>
-      <div>
-        {mutation.isSuccess && (
-          <Banner
-            type="success"
-            message={`Customer created: ${mutation.data?.customer_number} - ${mutation.data?.name}`}
-          />
-        )}
-        {mutation.isError && <Banner type="error" message={mutation.error?.message} />}
-      </div>
     </div>
   )
 }
