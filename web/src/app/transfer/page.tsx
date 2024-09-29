@@ -1,42 +1,27 @@
 'use client'
 
-import { useState, useEffect } from 'react'
-import { useRouter } from 'next/navigation'
-import { useMutation, useQueryClient } from '@tanstack/react-query'
+import { useState } from 'react'
+import { useAccountRouting } from '@/hooks/useRouting'
+import { useSyncedState } from '@/hooks/useSyncedState'
+import { useMutationHandler } from '@/hooks/useMutationHandler'
 import { TransferQuery } from '@/queries'
 import { Transfer, TransferCreate } from '@/types'
 import BackButton from '@/components/BackButton'
 import AccountPicker from '@/components/account/AccountPicker'
 import Button from '@/components/Button'
 import Banner from '@/components/Banner'
-import Routes from '@/utils/routes'
+import Params from '@/utils/params'
 
-export default function TransferPage({ searchParams }: { searchParams: { accountFrom: string; accountTo: string } }) {
-  const router = useRouter()
+export default function TransferPage() {
+  const { redirectToAccountDetails } = useAccountRouting()
 
-  const queryClient = useQueryClient()
-
-  const [fromAccount, setFromAccount] = useState<string | null>(null)
-  const [toAccount, setToAccount] = useState<string | null>(null)
+  const [fromAccount, setFromAccount] = useSyncedState<string | null>(Params.TRANSFER_FROM, null)
+  const [toAccount, setToAccount] = useSyncedState<string | null>(Params.TRANSFER_TO, null)
   const [amount, setAmount] = useState<number>(0)
 
-  useEffect(() => {
-    if (searchParams.accountFrom) {
-      setFromAccount(searchParams.accountFrom)
-    }
-  }, [searchParams.accountFrom])
-
-  useEffect(() => {
-    if (searchParams.accountTo) {
-      setToAccount(searchParams.accountTo)
-    }
-  }, [searchParams.accountTo])
-
-  const mutation = useMutation<Transfer, Error, TransferCreate>({
+  const mutation = useMutationHandler<Transfer, TransferCreate, Error>({
     mutationFn: TransferQuery.create,
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['transfers'] })
-    }
+    invalidateQuery: ['transfers']
   })
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -47,31 +32,15 @@ export default function TransferPage({ searchParams }: { searchParams: { account
       return
     }
 
-    mutation.mutate(
-      { sender_account_number: fromAccount, receiver_account_number: toAccount, amount },
-      {
-        onSuccess: () => {}
-      }
-    )
-  }
-
-  const onViewAccount = (accountNumber: string) => {
-    router.push(`${Routes.ACCOUNT_DETAILS}?accountNumber=${accountNumber}`)
-  }
-
-  const setAccount = (
-    accountNumber: string | null,
-    paramName: string,
-    setter: (accountNumber: string | null) => void
-  ) => {
-    const urlSearchParams = new URLSearchParams(window.location.search)
-    if (accountNumber) {
-      urlSearchParams.set(paramName, accountNumber)
-    } else {
-      urlSearchParams.delete(paramName)
+    const transferCreate: TransferCreate = {
+      sender_account_number: fromAccount,
+      receiver_account_number: toAccount,
+      amount
     }
-    router.replace(`${Routes.TRANSFER}?${urlSearchParams.toString()}`)
-    setter(accountNumber)
+
+    mutation.mutate(transferCreate, {
+      onSuccess: () => {}
+    })
   }
 
   return (
@@ -83,30 +52,23 @@ export default function TransferPage({ searchParams }: { searchParams: { account
           <div className="mb-2 flex items-center justify-between">
             <label htmlFor="fromAccount">From Account</label>
             {fromAccount && (
-              <span className="link text-sm" onClick={() => onViewAccount(fromAccount)}>
+              <span className="link text-sm" onClick={() => redirectToAccountDetails(fromAccount)}>
                 View Details
               </span>
             )}
           </div>
-          <AccountPicker
-            selectedAccount={fromAccount}
-            onSelectAccount={(accountNumber) => setAccount(accountNumber, 'accountFrom', setFromAccount)}
-          />
+          <AccountPicker selectedAccount={fromAccount} onSelectAccount={setFromAccount} />
         </div>
         <div>
           <div className="mb-2 flex items-center justify-between">
             <label htmlFor="toAccount">To Account</label>
             {toAccount && (
-              <span className="link text-sm" onClick={() => onViewAccount(toAccount)}>
+              <span className="link text-sm" onClick={() => redirectToAccountDetails(toAccount)}>
                 View Details
               </span>
             )}
           </div>
-          <AccountPicker
-            selectedAccount={toAccount}
-            onSelectAccount={(accountNumber) => setAccount(accountNumber, 'accountTo', setToAccount)}
-            autoFocus={fromAccount !== null}
-          />
+          <AccountPicker selectedAccount={toAccount} onSelectAccount={setToAccount} autoFocus={fromAccount !== null} />
         </div>
         <div>
           <label htmlFor="amount">Amount</label>
