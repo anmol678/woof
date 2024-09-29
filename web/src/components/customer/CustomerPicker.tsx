@@ -1,7 +1,7 @@
 'use client'
 
 import { useQuery } from '@tanstack/react-query'
-import { useRouter } from 'next/navigation'
+import { useCustomerRouting } from '@/hooks/useRouting'
 import { Customer } from '@/types'
 import { CustomerQuery } from '@/queries'
 import Banner from '@/components/Banner'
@@ -18,11 +18,8 @@ function customerToString(customer: Customer): string {
   return `${customer.name} - ${customer.customer_number}`
 }
 
-export default function CustomerPicker({
-  selectedCustomer: selectedCustomerNumber,
-  onSelectCustomer
-}: CustomerPickerProps) {
-  const router = useRouter()
+export default function CustomerPicker({ selectedCustomer, onSelectCustomer }: CustomerPickerProps) {
+  const { redirectToCreateCustomer } = useCustomerRouting()
   const createCustomerId = 'create-new-customer'
 
   const {
@@ -38,12 +35,9 @@ export default function CustomerPicker({
 
   const handleSelectCustomer = (customerNumber: string | null) => {
     if (customerNumber === createCustomerId) {
-      const redirect = window.location.pathname
-      if (Object.values(Routes).includes(redirect as Routes)) {
-        router.push(`${Routes.CREATE_CUSTOMER}?redirect=${redirect}`)
-      } else {
-        router.push(Routes.CREATE_CUSTOMER)
-      }
+      const route = window.location.pathname as Routes
+      const isRedirect = Object.values(Routes).includes(route)
+      redirectToCreateCustomer(isRedirect ? route : undefined)
     } else {
       onSelectCustomer(customerNumber)
     }
@@ -61,7 +55,7 @@ export default function CustomerPicker({
           options={customers}
           getOptionLabel={customerToString}
           getOptionValue={(customer) => customer.customer_number}
-          selectedOption={selectedCustomerNumber}
+          selectedOption={selectedCustomer}
           onSelect={handleSelectCustomer}
           placeholder="Search customers..."
           createNewOption={{

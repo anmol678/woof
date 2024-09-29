@@ -6,7 +6,11 @@ import { CustomerQuery } from '@/queries'
 import Banner from '@/components/Banner'
 import Loader from '@/components/Loader'
 
-export default function CustomerDetails({ customerNumber }: { customerNumber: string }) {
+interface CustomerDetailsProps {
+  customerNumber: string
+}
+
+export default function CustomerDetails({ customerNumber }: CustomerDetailsProps) {
   const {
     data: customerDetails,
     isSuccess,

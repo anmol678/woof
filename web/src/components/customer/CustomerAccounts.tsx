@@ -1,8 +1,8 @@
 'use client'
 
-import { useMemo, useCallback } from 'react'
+import { useMemo } from 'react'
+import { useAccountRouting, useTransferRouting } from '@/hooks/useRouting'
 import { useQuery } from '@tanstack/react-query'
-import { useRouter } from 'next/navigation'
 import { CustomerQuery } from '@/queries'
 import { Account } from '@/types'
 import Loader from '@/components/Loader'
@@ -10,8 +10,13 @@ import Banner from '@/components/Banner'
 import Button from '@/components/Button'
 import Routes from '@/utils/routes'
 
-export default function CustomerAccounts({ customerNumber }: { customerNumber: string }) {
-  const router = useRouter()
+interface CustomerAccountsProps {
+  customerNumber: string
+}
+
+export default function CustomerAccounts({ customerNumber }: CustomerAccountsProps) {
+  const { redirectToAccountDetails, redirectToCreateAccount } = useAccountRouting()
+  const { redirectToTransferDetails } = useTransferRouting()
 
   const {
     data: accounts,
@@ -24,29 +29,11 @@ export default function CustomerAccounts({ customerNumber }: { customerNumber: s
     queryFn: () => CustomerQuery.getAccounts(customerNumber)
   })
 
-  const onCreateAccount = useCallback(() => {
-    router.push(`${Routes.CREATE_ACCOUNT}?customerNumber=${customerNumber}&redirect=${Routes.CUSTOMER_DETAILS}`)
-  }, [router, customerNumber])
-
-  const onViewAccount = useCallback(
-    (accountNumber: string) => {
-      router.push(`${Routes.ACCOUNT_DETAILS}?accountNumber=${accountNumber}`)
-    },
-    [router]
-  )
-
-  const onTransferFromAccount = useCallback(
-    (accountNumber: string) => {
-      router.push(`${Routes.TRANSFER}?accountFrom=${accountNumber}`)
-    },
-    [router]
-  )
-
   const renderAccounts = useMemo(
     () =>
       accounts?.map((account) => (
         <tr key={account.id} className="border-b">
-          <td className="link py-2" onClick={() => onViewAccount(account.account_number)}>
+          <td className="link py-2" onClick={() => redirectToAccountDetails(account.account_number)}>
             {account.account_number}
           </td>
           <td className="py-2 capitalize">${account.balance.toFixed(2)}</td>
@@ -54,14 +41,14 @@ export default function CustomerAccounts({ customerNumber }: { customerNumber: s
             <Button
               data-style="primary"
               data-size="small"
-              onClick={() => onTransferFromAccount(account.account_number)}
+              onClick={() => redirectToTransferDetails({ from: account.account_number })}
             >
               Transfer
             </Button>
           </td>
         </tr>
       )),
-    [accounts, onTransferFromAccount, onViewAccount]
+    [accounts, redirectToAccountDetails, redirectToTransferDetails]
   )
 
   return (
@@ -89,7 +76,12 @@ export default function CustomerAccounts({ customerNumber }: { customerNumber: s
               {renderAccounts}
             </tbody>
           </table>
-          <Button data-style="action" data-size="small" className="mt-4" onClick={onCreateAccount}>
+          <Button
+            data-style="action"
+            data-size="small"
+            className="mt-4"
+            onClick={() => redirectToCreateAccount(customerNumber, Routes.CUSTOMER_DETAILS)}
+          >
             Create Account
           </Button>
         </>
