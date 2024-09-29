@@ -7,6 +7,7 @@ import { CustomerQuery } from '@/queries'
 import Banner from '@/components/Banner'
 import Loader from '@/components/Loader'
 import Picker from '@/components/Picker'
+import PATHS from '@/utils/paths'
 
 interface CustomerPickerProps {
   selectedCustomer: string | null
@@ -37,7 +38,12 @@ export default function CustomerPicker({
 
   const handleSelectCustomer = (customerNumber: string | null) => {
     if (customerNumber === createCustomerId) {
-      router.push(`/customers/create?redirect=create-account`)
+      const redirect = window.location.pathname
+      if (Object.values(PATHS).includes(redirect as PATHS)) {
+        router.push(`${PATHS.CREATE_CUSTOMER}?redirect=${redirect}`)
+      } else {
+        router.push(PATHS.CREATE_CUSTOMER)
+      }
     } else {
       onSelectCustomer(customerNumber)
     }

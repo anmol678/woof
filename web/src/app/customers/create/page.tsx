@@ -8,6 +8,7 @@ import { CustomerQuery } from '@/queries'
 import BackButton from '@/components/BackButton'
 import Button from '@/components/Button'
 import Banner from '@/components/Banner'
+import PATHS from '@/utils/paths'
 
 export default function CreateCustomer({ searchParams }: { searchParams: { redirect: string } }) {
   const router = useRouter()
@@ -23,6 +24,8 @@ export default function CreateCustomer({ searchParams }: { searchParams: { redir
     }
   })
 
+  const isRedirect = Object.values(PATHS).includes(searchParams.redirect as PATHS)
+
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
     mutation.mutate(
@@ -30,15 +33,14 @@ export default function CreateCustomer({ searchParams }: { searchParams: { redir
       {
         onSuccess: (data) => {
           setName('')
-          if (searchParams.redirect === 'create-account') {
-            router.push(`/accounts/create?customerNumber=${data.customer_number}`)
-          }
+          const redirect = isRedirect ? searchParams.redirect : PATHS.CUSTOMER_DETAILS
+          router.push(`${redirect}?customerNumber=${data.customer_number}`)
         }
       }
     )
   }
 
-  const backRoute = searchParams.redirect === 'create-account' ? '/accounts/create' : undefined
+  const backRoute = isRedirect ? searchParams.redirect : undefined
 
   return (
     <div className="mx-auto max-w-md">

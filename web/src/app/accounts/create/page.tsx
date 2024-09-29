@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useEffect } from 'react'
+import { useRouter } from 'next/navigation'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { Account, AccountCreate } from '@/types'
 import { AccountQuery } from '@/queries'
@@ -8,12 +9,20 @@ import BackButton from '@/components/BackButton'
 import Button from '@/components/Button'
 import Banner from '@/components/Banner'
 import CustomerPicker from '@/components/customer/CustomerPicker'
+import PATHS from '@/utils/paths'
+export default function CreateAccount({
+  searchParams
+}: {
+  searchParams: { customerNumber: string; redirect: string }
+}) {
+  const router = useRouter()
 
-export default function CreateAccount({ searchParams }: { searchParams: { customerNumber: string } }) {
   const queryClient = useQueryClient()
 
   const [selectedCustomer, setSelectedCustomer] = useState<string | null>(null)
   const [initialDeposit, setInitialDeposit] = useState('')
+
+  const isRedirect = Object.values(PATHS).includes(searchParams.redirect as PATHS)
 
   useEffect(() => {
     if (searchParams.customerNumber) {
@@ -39,17 +48,21 @@ export default function CreateAccount({ searchParams }: { searchParams: { custom
     mutation.mutate(
       { customer_number: selectedCustomer, initial_deposit: parseFloat(initialDeposit) },
       {
-        onSuccess: () => {
+        onSuccess: (data) => {
           setSelectedCustomer(null)
           setInitialDeposit('')
+          const redirect = isRedirect ? searchParams.redirect : PATHS.CUSTOMER_DETAILS
+          router.push(`${redirect}?customerNumber=${data.customer_number}`)
         }
       }
     )
   }
 
+  const backRoute = isRedirect ? undefined : '/'
+
   return (
     <div className="mx-auto max-w-md">
-      <BackButton route="/" />
+      <BackButton route={backRoute} />
       <h1 className="mb-4 text-2xl font-bold">Create New Account</h1>
       <form onSubmit={handleSubmit} className="space-y-4">
         <div>

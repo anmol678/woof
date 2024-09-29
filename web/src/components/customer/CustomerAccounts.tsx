@@ -7,6 +7,7 @@ import { Account } from '@/types'
 import Loader from '@/components/Loader'
 import Banner from '@/components/Banner'
 import Button from '@/components/Button'
+import PATHS from '@/utils/paths'
 
 export default function CustomerAccounts({ customerNumber }: { customerNumber: string }) {
   const router = useRouter()
@@ -23,11 +24,11 @@ export default function CustomerAccounts({ customerNumber }: { customerNumber: s
   })
 
   const onCreateAccount = () => {
-    router.push(`/accounts/create?customerNumber=${customerNumber}&redirect=customer`)
+    router.push(`${PATHS.CREATE_ACCOUNT}?customerNumber=${customerNumber}&redirect=${PATHS.CUSTOMER_DETAILS}`)
   }
 
   const onViewAccount = (accountNumber: string) => {
-    router.push(`/accounts?accountNumber=${accountNumber}`)
+    router.push(`${PATHS.ACCOUNT_DETAILS}?accountNumber=${accountNumber}`)
   }
 
   return (
@@ -47,12 +48,7 @@ export default function CustomerAccounts({ customerNumber }: { customerNumber: s
             {accounts.length === 0 && (
               <tr>
                 <td colSpan={3} className="pb-3 pt-6 text-center text-gray-500">
-                  <div className="flex flex-col items-center gap-4">
-                    <p>No accounts yet</p>
-                    <Button data-style="action" onClick={onCreateAccount}>
-                      Create Account
-                    </Button>
-                  </div>
+                  <p>No accounts yet</p>
                 </td>
               </tr>
             )}
@@ -67,6 +63,15 @@ export default function CustomerAccounts({ customerNumber }: { customerNumber: s
                 </td>
               </tr>
             ))}
+            <tr>
+              <td colSpan={3} className="pb-1 pt-4">
+                <div className="flex items-center justify-center">
+                  <Button data-style="action" onClick={onCreateAccount}>
+                    Create Account
+                  </Button>
+                </div>
+              </td>
+            </tr>
           </tbody>
         </table>
       )}
