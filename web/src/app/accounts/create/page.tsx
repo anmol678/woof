@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useEffect, useRef } from 'react'
-import { useRouter } from 'next/navigation'
+import { useRouting } from '@/hooks/useRouting'
 import { useSyncedState } from '@/hooks/useSyncedState'
 import { useMutationHandler } from '@/hooks/useMutationHandler'
 import { Account, AccountCreate } from '@/types'
@@ -18,7 +18,7 @@ interface CreateAccountProps {
 }
 
 export default function CreateAccount({ searchParams }: CreateAccountProps) {
-  const router = useRouter()
+  const { redirectTo } = useRouting()
 
   const [selectedCustomer, setSelectedCustomer] = useSyncedState<string | null>(Params.CUSTOMER_NUMBER, null)
 
@@ -38,6 +38,11 @@ export default function CreateAccount({ searchParams }: CreateAccountProps) {
     invalidateQuery: ['accounts']
   })
 
+  const resetForm = () => {
+    setSelectedCustomer(null)
+    setInitialDeposit('')
+  }
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
 
@@ -52,20 +57,20 @@ export default function CreateAccount({ searchParams }: CreateAccountProps) {
     }
 
     mutation.mutate(accountCreate, {
-      onSuccess: (data) => {
-        setSelectedCustomer(null)
-        setInitialDeposit('')
+      onSuccess: (data: Account) => {
+        resetForm()
         const redirect = isRedirect ? searchParams.redirect : Routes.CUSTOMER_DETAILS
-        router.push(`${redirect}?customerNumber=${data.customer_number}&from=create-account`)
+        redirectTo(redirect as Routes, {
+          [Params.CUSTOMER_NUMBER]: data.customer_number,
+          [Params.FROM]: Routes.CREATE_ACCOUNT
+        })
       }
     })
   }
 
-  const backRoute = isRedirect ? undefined : '/'
-
   return (
     <div className="mx-auto max-w-md">
-      <BackButton route={backRoute} />
+      <BackButton route={isRedirect ? undefined : '/'} />
       <h1>Create New Account</h1>
       <form onSubmit={handleSubmit} className="space-y-4">
         <div>
