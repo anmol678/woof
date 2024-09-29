@@ -32,7 +32,7 @@ export default function CreateCustomer({ searchParams }: CreateCustomerProps) {
     mutation.mutate(
       { name },
       {
-        onSuccess: (data) => {
+        onSuccess: (data: Customer) => {
           setName('')
           const redirect = isRedirect ? searchParams.redirect : Routes.CUSTOMER_DETAILS
           redirectTo(redirect as Routes, {
