@@ -1,7 +1,7 @@
 'use client'
 
-import { useMemo, useCallback } from 'react'
-import { useRouter } from 'next/navigation'
+import { useMemo } from 'react'
+import { useAccountRouting, useTransferRouting } from '@/hooks/useRouting'
 import { useQuery } from '@tanstack/react-query'
 import { AccountQuery } from '@/queries'
 import { Transfer } from '@/types'
@@ -9,11 +9,15 @@ import Loader from '@/components/Loader'
 import Banner from '@/components/Banner'
 import Button from '@/components/Button'
 import { cn } from '@/utils/styles'
-import Routes from '@/utils/routes'
 import { formatDate } from '@/utils/date'
 
-export default function AccountTransfers({ accountNumber }: { accountNumber: string }) {
-  const router = useRouter()
+interface AccountTransfersProps {
+  accountNumber: string
+}
+
+export default function AccountTransfers({ accountNumber }: AccountTransfersProps) {
+  const { redirectToAccountDetails } = useAccountRouting()
+  const { redirectToTransferDetails } = useTransferRouting()
 
   const {
     data: transfers,
@@ -26,25 +30,14 @@ export default function AccountTransfers({ accountNumber }: { accountNumber: str
     queryFn: () => AccountQuery.getTransfers(accountNumber)
   })
 
-  const onViewAccount = useCallback(
-    (accountNumber: string) => {
-      router.push(`${Routes.ACCOUNT_DETAILS}?accountNumber=${accountNumber}`)
-    },
-    [router]
-  )
-
-  const onTransferFromAccount = useCallback(() => {
-    router.push(`${Routes.TRANSFER}?accountFrom=${accountNumber}`)
-  }, [router, accountNumber])
-
   const renderTransfers = useMemo(() => {
     return transfers?.map((transfer) => (
       <tr key={transfer.id} className="border-b">
         <td className="py-2">{formatDate(transfer.timestamp)}</td>
-        <td className="link py-2" onClick={() => onViewAccount(transfer.sender_account_number)}>
+        <td className="link py-2" onClick={() => redirectToAccountDetails(transfer.sender_account_number)}>
           {transfer.sender_account_number}
         </td>
-        <td className="link py-2" onClick={() => onViewAccount(transfer.receiver_account_number)}>
+        <td className="link py-2" onClick={() => redirectToAccountDetails(transfer.receiver_account_number)}>
           {transfer.receiver_account_number}
         </td>
         <td
@@ -57,7 +50,7 @@ export default function AccountTransfers({ accountNumber }: { accountNumber: str
         </td>
       </tr>
     ))
-  }, [transfers, accountNumber, onViewAccount])
+  }, [transfers, accountNumber, redirectToAccountDetails])
 
   return (
     <div className="card">
@@ -85,7 +78,12 @@ export default function AccountTransfers({ accountNumber }: { accountNumber: str
               {renderTransfers}
             </tbody>
           </table>
-          <Button data-style="primary" data-size="small" className="mt-4" onClick={onTransferFromAccount}>
+          <Button
+            data-style="primary"
+            data-size="small"
+            className="mt-4"
+            onClick={() => redirectToTransferDetails({ from: accountNumber })}
+          >
             Transfer
           </Button>
         </>

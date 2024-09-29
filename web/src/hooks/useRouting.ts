@@ -46,3 +46,16 @@ export function useCustomerRouting() {
 
   return { redirectToCustomerDetails }
 }
+
+export function useTransferRouting() {
+  const { redirectTo } = useRouting()
+
+  const redirectToTransferDetails = ({ from, to }: { from?: string; to?: string }) => {
+    redirectTo(Routes.TRANSFER, {
+      ...(from && { [Params.TRANSFER_FROM]: from }),
+      ...(to && { [Params.TRANSFER_TO]: to })
+    })
+  }
+
+  return { redirectToTransferDetails }
+}

@@ -17,11 +17,7 @@ function accountToString(account: Account): string {
   return `${account.account_number} - Customer: ${account.customer_number}`
 }
 
-export default function AccountPicker({
-  selectedAccount: selectedAccountNumber,
-  onSelectAccount,
-  autoFocus = true
-}: AccountPickerProps) {
+export default function AccountPicker({ selectedAccount, onSelectAccount, autoFocus = true }: AccountPickerProps) {
   const {
     data: accounts,
     isSuccess,
@@ -45,7 +41,7 @@ export default function AccountPicker({
           options={accounts}
           getOptionLabel={accountToString}
           getOptionValue={(account) => account.account_number}
-          selectedOption={selectedAccountNumber}
+          selectedOption={selectedAccount}
           onSelect={onSelectAccount}
           placeholder="Search accounts..."
           autoFocus={autoFocus}

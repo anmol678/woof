@@ -1,15 +1,18 @@
 'use client'
 
-import { useRouter } from 'next/navigation'
+import { useCustomerRouting } from '@/hooks/useRouting'
 import { useQuery } from '@tanstack/react-query'
 import { Account } from '@/types'
 import { AccountQuery } from '@/queries'
 import Banner from '@/components/Banner'
 import Loader from '@/components/Loader'
-import Routes from '@/utils/routes'
 
-export default function AccountDetails({ accountNumber }: { accountNumber: string }) {
-  const router = useRouter()
+interface AccountDetailsProps {
+  accountNumber: string
+}
+
+export default function AccountDetails({ accountNumber }: AccountDetailsProps) {
+  const { redirectToCustomerDetails } = useCustomerRouting()
 
   const {
     data: accountDetails,
@@ -22,17 +25,13 @@ export default function AccountDetails({ accountNumber }: { accountNumber: strin
     queryFn: () => AccountQuery.get(accountNumber)
   })
 
-  const onViewCustomer = (customerNumber: string) => {
-    router.push(`${Routes.CUSTOMER_DETAILS}?customerNumber=${customerNumber}`)
-  }
-
   return (
     <div className="space-y-6">
       <div className="card">
         <div className="flex items-center justify-between">
           <h2>Account Balance</h2>
           {isSuccess && (
-            <span className="link text-sm" onClick={() => onViewCustomer(accountDetails.customer_number)}>
+            <span className="link text-sm" onClick={() => redirectToCustomerDetails(accountDetails.customer_number)}>
               View Customer Details
             </span>
           )}
