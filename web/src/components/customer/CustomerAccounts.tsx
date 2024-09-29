@@ -1,5 +1,6 @@
 'use client'
 
+import { useMemo, useCallback } from 'react'
 import { useQuery } from '@tanstack/react-query'
 import { useRouter } from 'next/navigation'
 import { CustomerQuery } from '@/queries'
@@ -23,17 +24,48 @@ export default function CustomerAccounts({ customerNumber }: { customerNumber: s
     queryFn: () => CustomerQuery.getAccounts(customerNumber)
   })
 
-  const onCreateAccount = () => {
+  const onCreateAccount = useCallback(() => {
     router.push(`${PATHS.CREATE_ACCOUNT}?customerNumber=${customerNumber}&redirect=${PATHS.CUSTOMER_DETAILS}`)
-  }
+  }, [router, customerNumber])
 
-  const onViewAccount = (accountNumber: string) => {
-    router.push(`${PATHS.ACCOUNT_DETAILS}?accountNumber=${accountNumber}`)
-  }
+  const onViewAccount = useCallback(
+    (accountNumber: string) => {
+      router.push(`${PATHS.ACCOUNT_DETAILS}?accountNumber=${accountNumber}`)
+    },
+    [router]
+  )
 
-  const onTransferFromAccount = (accountNumber: string) => {
-    router.push(`${PATHS.TRANSFER}?accountFrom=${accountNumber}`)
-  }
+  const onTransferFromAccount = useCallback(
+    (accountNumber: string) => {
+      router.push(`${PATHS.TRANSFER}?accountFrom=${accountNumber}`)
+    },
+    [router]
+  )
+
+  const renderAccounts = useMemo(
+    () =>
+      accounts?.map((account) => (
+        <tr key={account.id} className="border-b">
+          <td
+            className="cursor-pointer py-2 text-blue-500 hover:text-blue-600 hover:underline"
+            onClick={() => onViewAccount(account.account_number)}
+          >
+            {account.account_number}
+          </td>
+          <td className="py-2 capitalize">${account.balance.toFixed(2)}</td>
+          <td className="flex justify-end gap-2 py-2">
+            <Button
+              data-style="primary"
+              data-size="small"
+              onClick={() => onTransferFromAccount(account.account_number)}
+            >
+              Transfer
+            </Button>
+          </td>
+        </tr>
+      )),
+    [accounts, onTransferFromAccount, onViewAccount]
+  )
 
   return (
     <div className="rounded-md bg-background p-4 shadow">
@@ -57,26 +89,7 @@ export default function CustomerAccounts({ customerNumber }: { customerNumber: s
                   </td>
                 </tr>
               )}
-              {accounts.map((account) => (
-                <tr key={account.id} className="border-b">
-                  <td
-                    className="cursor-pointer py-2 text-blue-500 hover:text-blue-600 hover:underline"
-                    onClick={() => onViewAccount(account.account_number)}
-                  >
-                    {account.account_number}
-                  </td>
-                  <td className="py-2 capitalize">${account.balance.toFixed(2)}</td>
-                  <td className="flex justify-end gap-2 py-2">
-                    <Button
-                      data-style="primary"
-                      data-size="small"
-                      onClick={() => onTransferFromAccount(account.account_number)}
-                    >
-                      Transfer
-                    </Button>
-                  </td>
-                </tr>
-              ))}
+              {renderAccounts}
             </tbody>
           </table>
           <Button data-style="action" data-size="small" className="mt-4" onClick={onCreateAccount}>

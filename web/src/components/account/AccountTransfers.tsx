@@ -1,5 +1,6 @@
 'use client'
 
+import { useMemo, useCallback } from 'react'
 import { useRouter } from 'next/navigation'
 import { useQuery } from '@tanstack/react-query'
 import { AccountQuery } from '@/queries'
@@ -9,6 +10,7 @@ import Banner from '@/components/Banner'
 import Button from '@/components/Button'
 import { cn } from '@/utils/styles'
 import PATHS from '@/utils/paths'
+import { formatDate } from '@/utils/date'
 
 export default function AccountTransfers({ accountNumber }: { accountNumber: string }) {
   const router = useRouter()
@@ -24,9 +26,44 @@ export default function AccountTransfers({ accountNumber }: { accountNumber: str
     queryFn: () => AccountQuery.getTransfers(accountNumber)
   })
 
-  const onTransferFromAccount = () => {
+  const onViewAccount = useCallback(
+    (accountNumber: string) => {
+      router.push(`${PATHS.ACCOUNT_DETAILS}?accountNumber=${accountNumber}`)
+    },
+    [router]
+  )
+
+  const onTransferFromAccount = useCallback(() => {
     router.push(`${PATHS.TRANSFER}?accountFrom=${accountNumber}`)
-  }
+  }, [router, accountNumber])
+
+  const renderTransfers = useMemo(() => {
+    return transfers?.map((transfer) => (
+      <tr key={transfer.id} className="border-b">
+        <td className="py-2">{formatDate(transfer.timestamp)}</td>
+        <td
+          className="cursor-pointer py-2 text-blue-500 hover:text-blue-600 hover:underline"
+          onClick={() => onViewAccount(transfer.sender_account_number)}
+        >
+          {transfer.sender_account_number}
+        </td>
+        <td
+          className="cursor-pointer py-2 text-blue-500 hover:text-blue-600 hover:underline"
+          onClick={() => onViewAccount(transfer.receiver_account_number)}
+        >
+          {transfer.receiver_account_number}
+        </td>
+        <td
+          className={cn(
+            'py-2 text-right',
+            transfer.sender_account_number === accountNumber ? 'text-red-600' : 'text-green-600'
+          )}
+        >
+          ${transfer.amount.toFixed(2)}
+        </td>
+      </tr>
+    ))
+  }, [transfers, accountNumber, onViewAccount])
 
   return (
     <div className="rounded-md bg-white p-4 shadow">
@@ -51,21 +88,7 @@ export default function AccountTransfers({ accountNumber }: { accountNumber: str
                   </td>
                 </tr>
               )}
-              {transfers.map((transfer) => (
-                <tr key={transfer.id} className="border-b">
-                  <td className="py-2">{transfer.timestamp}</td>
-                  <td className="py-2 capitalize">{transfer.sender_account_number}</td>
-                  <td className="py-2 capitalize">{transfer.receiver_account_number}</td>
-                  <td
-                    className={cn(
-                      'py-2 text-right',
-                      transfer.sender_account_number === accountNumber ? 'text-red-600' : 'text-green-600'
-                    )}
-                  >
-                    ${Math.abs(transfer.amount).toFixed(2)}
-                  </td>
-                </tr>
-              ))}
+              {renderTransfers}
             </tbody>
           </table>
           <Button data-style="primary" data-size="small" className="mt-4" onClick={onTransferFromAccount}>
