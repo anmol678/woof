@@ -1,5 +1,6 @@
 import { useRouter } from 'next/navigation'
 import Routes from '@/utils/routes'
+import Params from '@/utils/params'
 
 export function useRouting() {
   const router = useRouter()
@@ -24,4 +25,24 @@ export function useRouting() {
   }
 
   return { redirectTo, replaceRoute }
+}
+
+export function useAccountRouting() {
+  const { redirectTo } = useRouting()
+
+  const redirectToAccountDetails = (accountNumber: string) => {
+    redirectTo(Routes.ACCOUNT_DETAILS, { [Params.ACCOUNT_NUMBER]: accountNumber })
+  }
+
+  return { redirectToAccountDetails }
+}
+
+export function useCustomerRouting() {
+  const { redirectTo } = useRouting()
+
+  const redirectToCustomerDetails = (customerNumber: string) => {
+    redirectTo(Routes.CUSTOMER_DETAILS, { [Params.CUSTOMER_NUMBER]: customerNumber })
+  }
+
+  return { redirectToCustomerDetails }
 }
