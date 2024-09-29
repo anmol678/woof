@@ -1,31 +1,18 @@
 'use client'
 
-import { useState, useEffect } from 'react'
-import { useRouter } from 'next/navigation'
+import { useSyncedState } from '@/hooks/useSyncedState'
 import BackButton from '@/components/BackButton'
 import CustomerPicker from '@/components/customer/CustomerPicker'
 import CustomerDetails from '@/components/customer/CustomerDetails'
 import CustomerAccounts from '@/components/customer/CustomerAccounts'
+import Params from '@/utils/params'
 
-export default function CustomerPage({ searchParams }: { searchParams: { customerNumber: string; from: string } }) {
-  const router = useRouter()
+interface CustomerPageProps {
+  searchParams: { customerNumber: string; from: string }
+}
 
-  const [customerNumber, setCustomerNumber] = useState<string | null>(null)
-
-  useEffect(() => {
-    if (searchParams.customerNumber) {
-      setCustomerNumber(searchParams.customerNumber)
-    }
-  }, [searchParams.customerNumber])
-
-  const handleCustomerChange = (customerNumber: string | null) => {
-    if (customerNumber) {
-      router.replace(`/customers?customerNumber=${customerNumber}`)
-    } else {
-      router.replace('/customers')
-    }
-    setCustomerNumber(customerNumber)
-  }
+export default function CustomerPage({ searchParams }: CustomerPageProps) {
+  const [customerNumber, setCustomerNumber] = useSyncedState<string | null>(Params.CUSTOMER_NUMBER, null)
 
   const backRoute = searchParams.from ? '/' : undefined
 
@@ -34,7 +21,7 @@ export default function CustomerPage({ searchParams }: { searchParams: { custome
       <BackButton route={backRoute} />
       <h1>Customer Details</h1>
       <form className="mb-6">
-        <CustomerPicker selectedCustomer={customerNumber} onSelectCustomer={handleCustomerChange} />
+        <CustomerPicker selectedCustomer={customerNumber} onSelectCustomer={setCustomerNumber} />
       </form>
 
       {customerNumber && (

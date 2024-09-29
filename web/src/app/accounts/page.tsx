@@ -1,32 +1,18 @@
 'use client'
 
-import { useState, useEffect } from 'react'
-import { useRouter } from 'next/navigation'
+import { useSyncedState } from '@/hooks/useSyncedState'
 import BackButton from '@/components/BackButton'
 import AccountPicker from '@/components/account/AccountPicker'
 import AccountDetails from '@/components/account/AccountDetails'
 import AccountTransfers from '@/components/account/AccountTransfers'
-import Routes from '@/utils/routes'
+import Params from '@/utils/params'
 
-export default function AccountPage({ searchParams }: { searchParams: { accountNumber: string; from: string } }) {
-  const router = useRouter()
+interface AccountPageProps {
+  searchParams: { accountNumber: string; from: string }
+}
 
-  const [accountNumber, setAccountNumber] = useState<string | null>(null)
-
-  useEffect(() => {
-    if (searchParams.accountNumber) {
-      setAccountNumber(searchParams.accountNumber)
-    }
-  }, [searchParams.accountNumber])
-
-  const handleAccountChange = (accountNumber: string | null) => {
-    if (accountNumber) {
-      router.replace(`${Routes.ACCOUNT_DETAILS}?accountNumber=${accountNumber}`)
-    } else {
-      router.replace(Routes.ACCOUNT_DETAILS)
-    }
-    setAccountNumber(accountNumber)
-  }
+export default function AccountPage({ searchParams }: AccountPageProps) {
+  const [accountNumber, setAccountNumber] = useSyncedState<string | null>(Params.ACCOUNT_NUMBER, null)
 
   const backRoute = searchParams.from ? '/' : undefined
 
@@ -35,7 +21,7 @@ export default function AccountPage({ searchParams }: { searchParams: { accountN
       <BackButton route={backRoute} />
       <h1>Account Details</h1>
       <form className="mb-6">
-        <AccountPicker selectedAccount={accountNumber} onSelectAccount={handleAccountChange} />
+        <AccountPicker selectedAccount={accountNumber} onSelectAccount={setAccountNumber} />
       </form>
 
       {accountNumber && (
