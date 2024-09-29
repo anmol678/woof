@@ -29,6 +29,9 @@ async function request<T>(path: string, method: RequestMethod, body: object | nu
 
     if (!response.ok) {
       const errorData = await response.json()
+      if (errorData.detail instanceof Array && errorData.detail.length > 0) {
+        throw new Error(errorData.detail[0].msg)
+      }
       throw new Error(errorData.detail || 'Unknown error')
     }
 
