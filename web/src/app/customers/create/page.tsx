@@ -1,27 +1,28 @@
 'use client'
 
 import { useState } from 'react'
-import { useRouter } from 'next/navigation'
-import { useMutation, useQueryClient } from '@tanstack/react-query'
+import { useRouting } from '@/hooks/useRouting'
+import { useMutationHandler } from '@/hooks/useMutationHandler'
 import { Customer, CustomerCreate } from '@/types'
 import { CustomerQuery } from '@/queries'
 import BackButton from '@/components/BackButton'
 import Button from '@/components/Button'
 import Banner from '@/components/Banner'
 import Routes from '@/utils/routes'
+import Params from '@/utils/params'
 
-export default function CreateCustomer({ searchParams }: { searchParams: { redirect: string } }) {
-  const router = useRouter()
+interface CreateCustomerProps {
+  searchParams: { redirect: string }
+}
 
-  const queryClient = useQueryClient()
+export default function CreateCustomer({ searchParams }: CreateCustomerProps) {
+  const { redirectTo } = useRouting()
 
   const [name, setName] = useState('')
 
-  const mutation = useMutation<Customer, Error, CustomerCreate>({
+  const mutation = useMutationHandler<Customer, CustomerCreate, Error>({
     mutationFn: CustomerQuery.create,
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['customers'] })
-    }
+    invalidateQuery: ['customers']
   })
 
   const isRedirect = Object.values(Routes).includes(searchParams.redirect as Routes)
@@ -34,7 +35,10 @@ export default function CreateCustomer({ searchParams }: { searchParams: { redir
         onSuccess: (data) => {
           setName('')
           const redirect = isRedirect ? searchParams.redirect : Routes.CUSTOMER_DETAILS
-          router.push(`${redirect}?customerNumber=${data.customer_number}&from=create-customer`)
+          redirectTo(redirect as Routes, {
+            [Params.CUSTOMER_NUMBER]: data.customer_number,
+            [Params.FROM]: Routes.CREATE_CUSTOMER
+          })
         }
       }
     )
