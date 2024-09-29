@@ -20,7 +20,7 @@ export default function CustomerPage({ searchParams }: CustomerPageProps) {
     <div className="mx-auto max-w-4xl">
       <BackButton route={backRoute} />
       <h1>Customer Details</h1>
-      <form className="mb-6">
+      <form>
         <CustomerPicker selectedCustomer={customerNumber} onSelectCustomer={setCustomerNumber} />
       </form>
 

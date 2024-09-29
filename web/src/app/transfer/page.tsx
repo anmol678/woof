@@ -78,7 +78,7 @@ export default function TransferPage({ searchParams }: { searchParams: { account
     <div className="mx-auto max-w-md">
       <BackButton />
       <h1>Transfer Funds</h1>
-      <form onSubmit={handleSubmit} className="space-y-4">
+      <form onSubmit={handleSubmit}>
         <div>
           <div className="mb-2 flex items-center justify-between">
             <label htmlFor="fromAccount">From Account</label>
@@ -125,7 +125,7 @@ export default function TransferPage({ searchParams }: { searchParams: { account
           Transfer Funds
         </Button>
       </form>
-      <div className="mt-6">
+      <div>
         {mutation.isSuccess && <Banner type="success" message={`Transfer successful`} />}
         {mutation.isError && <Banner type="error" message={mutation.error?.message} />}
       </div>

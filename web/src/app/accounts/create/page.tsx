@@ -72,7 +72,7 @@ export default function CreateAccount({ searchParams }: CreateAccountProps) {
     <div className="mx-auto max-w-md">
       <BackButton route={isRedirect ? undefined : '/'} />
       <h1>Create New Account</h1>
-      <form onSubmit={handleSubmit} className="space-y-4">
+      <form onSubmit={handleSubmit}>
         <div>
           <label htmlFor="customerNumber" className="mb-2 block">
             Pick a customer
@@ -99,7 +99,7 @@ export default function CreateAccount({ searchParams }: CreateAccountProps) {
           Create Account
         </Button>
       </form>
-      <div className="mt-6">
+      <div>
         {mutation.isSuccess && <Banner type="success" message={`Account created: ${mutation.data?.account_number}`} />}
         {mutation.isError && <Banner type="error" message={mutation.error?.message} />}
       </div>

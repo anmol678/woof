@@ -20,7 +20,7 @@ export default function AccountPage({ searchParams }: AccountPageProps) {
     <div className="mx-auto max-w-4xl">
       <BackButton route={backRoute} />
       <h1>Account Details</h1>
-      <form className="mb-6">
+      <form>
         <AccountPicker selectedAccount={accountNumber} onSelectAccount={setAccountNumber} />
       </form>
 

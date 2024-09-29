@@ -44,8 +44,8 @@ export default function CreateCustomer({ searchParams }: { searchParams: { redir
     <div className="mx-auto max-w-md">
       <BackButton />
       <h1>Create New Customer</h1>
-      <form onSubmit={handleSubmit} className="space-y-4">
-        <div>
+      <form onSubmit={handleSubmit}>
+        <div className="mb-8">
           <label htmlFor="name">Name</label>
           <input
             type="text"
@@ -61,7 +61,7 @@ export default function CreateCustomer({ searchParams }: { searchParams: { redir
           Create Customer
         </Button>
       </form>
-      <div className="mt-6">
+      <div>
         {mutation.isSuccess && (
           <Banner
             type="success"
