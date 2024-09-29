@@ -1,20 +1,38 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
+import { useRouter } from 'next/navigation'
 import BackButton from '@/components/BackButton'
 import AccountPicker from '@/components/account/AccountPicker'
 import AccountDetails from '@/components/account/AccountDetails'
 import AccountTransfers from '@/components/account/AccountTransfers'
 
-export default function AccountPage() {
+export default function AccountPage({ searchParams }: { searchParams: { accountNumber: string } }) {
+  const router = useRouter()
+
   const [accountNumber, setAccountNumber] = useState<string | null>(null)
+
+  useEffect(() => {
+    if (searchParams.accountNumber) {
+      setAccountNumber(searchParams.accountNumber)
+    }
+  }, [searchParams.accountNumber])
+
+  const handleAccountChange = (accountNumber: string | null) => {
+    if (accountNumber) {
+      router.replace(`/accounts?accountNumber=${accountNumber}`)
+    } else {
+      router.replace('/accounts')
+    }
+    setAccountNumber(accountNumber)
+  }
 
   return (
     <div className="mx-auto max-w-2xl">
       <BackButton />
       <h1 className="mb-4 text-2xl font-bold">Account Details</h1>
       <form className="mb-6">
-        <AccountPicker selectedAccount={accountNumber} onSelectAccount={setAccountNumber} />
+        <AccountPicker selectedAccount={accountNumber} onSelectAccount={handleAccountChange} />
       </form>
 
       {accountNumber && (
