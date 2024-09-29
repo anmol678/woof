@@ -12,6 +12,7 @@ interface PickerProps<T> {
     label: string
     value: string
   }
+  autoFocus?: boolean
 }
 
 export default function Picker<T>({
@@ -21,7 +22,8 @@ export default function Picker<T>({
   onSelect,
   selectedOption,
   placeholder,
-  createNewOption
+  createNewOption,
+  autoFocus = true
 }: PickerProps<T>) {
   const [searchTerm, setSearchTerm] = useState('')
   const [isDropdownOpen, setIsDropdownOpen] = useState(false)
@@ -172,7 +174,7 @@ export default function Picker<T>({
           onKeyDown={handleKeyDown}
           placeholder={placeholder}
           className="w-full"
-          autoFocus={!selectedOption}
+          autoFocus={!selectedOption && autoFocus}
         />
         {isDropdownOpen && (
           <div

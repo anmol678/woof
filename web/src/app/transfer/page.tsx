@@ -109,6 +109,7 @@ export default function TransferPage({ searchParams }: { searchParams: { account
           <AccountPicker
             selectedAccount={toAccount}
             onSelectAccount={(accountNumber) => setAccount(accountNumber, 'accountTo', setToAccount)}
+            autoFocus={fromAccount !== null}
           />
         </div>
         <div>

@@ -10,13 +10,18 @@ import Picker from '@/components/Picker'
 interface AccountPickerProps {
   selectedAccount: string | null
   onSelectAccount: (accountNumber: string | null) => void
+  autoFocus?: boolean
 }
 
 function accountToString(account: Account): string {
   return `${account.account_number} - Customer: ${account.customer_number}`
 }
 
-export default function AccountPicker({ selectedAccount: selectedAccountNumber, onSelectAccount }: AccountPickerProps) {
+export default function AccountPicker({
+  selectedAccount: selectedAccountNumber,
+  onSelectAccount,
+  autoFocus = true
+}: AccountPickerProps) {
   const {
     data: accounts,
     isSuccess,
@@ -43,6 +48,7 @@ export default function AccountPicker({ selectedAccount: selectedAccountNumber, 
           selectedOption={selectedAccountNumber}
           onSelect={onSelectAccount}
           placeholder="Search accounts..."
+          autoFocus={autoFocus}
         />
       ) : null}
       {isError && <Banner type="error" message={error?.message} />}
