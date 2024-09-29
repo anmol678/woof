@@ -6,6 +6,7 @@ import BackButton from '@/components/BackButton'
 import AccountPicker from '@/components/account/AccountPicker'
 import AccountDetails from '@/components/account/AccountDetails'
 import AccountTransfers from '@/components/account/AccountTransfers'
+import PATHS from '@/utils/paths'
 
 export default function AccountPage({ searchParams }: { searchParams: { accountNumber: string } }) {
   const router = useRouter()
@@ -20,9 +21,9 @@ export default function AccountPage({ searchParams }: { searchParams: { accountN
 
   const handleAccountChange = (accountNumber: string | null) => {
     if (accountNumber) {
-      router.replace(`/accounts?accountNumber=${accountNumber}`)
+      router.replace(`${PATHS.ACCOUNT_DETAILS}?accountNumber=${accountNumber}`)
     } else {
-      router.replace('/accounts')
+      router.replace(PATHS.ACCOUNT_DETAILS)
     }
     setAccountNumber(accountNumber)
   }
