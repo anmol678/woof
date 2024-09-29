@@ -19,7 +19,7 @@
 
 @layer components {
   .dashboard-link {
-    @apply hover-border block cursor-pointer select-none rounded-lg border bg-background p-6;
+    @apply hover-border block cursor-pointer select-none rounded-lg border bg-background p-5;
   }
 
   .button {
