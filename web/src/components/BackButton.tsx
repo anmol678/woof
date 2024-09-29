@@ -1,5 +1,5 @@
 import { useRouter } from 'next/navigation'
-import { ChevronLeft } from 'lucide-react'
+import { ChevronLeftIcon } from '@heroicons/react/24/solid'
 
 interface BackButtonProps {
   route?: string
@@ -12,7 +12,7 @@ export default function BackButton({ route }: BackButtonProps) {
 
   return (
     <button className="back-button flex items-center justify-center" onClick={action}>
-      <ChevronLeft className="-ml-1" /> Back
+      <ChevronLeftIcon className="-ml-1 h-6 w-6 stroke-2" /> Back
     </button>
   )
 }

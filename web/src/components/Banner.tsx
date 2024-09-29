@@ -1,4 +1,4 @@
-import { CircleCheck, CircleAlert } from 'lucide-react'
+import { CheckCircleIcon, ExclamationTriangleIcon } from '@heroicons/react/24/outline'
 
 interface BannerProps {
   type: 'success' | 'error'
@@ -6,7 +6,7 @@ interface BannerProps {
 }
 
 export default function Banner({ type, message }: BannerProps) {
-  const Icon = type === 'success' ? CircleCheck : CircleAlert
+  const Icon = type === 'success' ? CheckCircleIcon : ExclamationTriangleIcon
   return (
     <div className="banner" data-style={type} role="alert">
       <div className="flex">
