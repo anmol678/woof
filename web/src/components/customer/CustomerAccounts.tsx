@@ -31,49 +31,58 @@ export default function CustomerAccounts({ customerNumber }: { customerNumber: s
     router.push(`${PATHS.ACCOUNT_DETAILS}?accountNumber=${accountNumber}`)
   }
 
+  const onTransferFromAccount = (accountNumber: string) => {
+    router.push(`${PATHS.TRANSFER}?accountFrom=${accountNumber}`)
+  }
+
   return (
-    <div className="rounded-md bg-white p-4 shadow">
+    <div className="rounded-md bg-background p-4 shadow">
       <h2 className="mb-2 text-xl font-semibold">Accounts</h2>
       {isLoading && <Loader data-style="accent" />}
       {isSuccess && (
-        <table className="w-full">
-          <thead>
-            <tr className="border-b">
-              <th className="py-2 text-left">Account Number</th>
-              <th className="py-2 text-left">Balance</th>
-              <th className="py-2 text-right">Actions</th>
-            </tr>
-          </thead>
-          <tbody>
-            {accounts.length === 0 && (
-              <tr>
-                <td colSpan={3} className="pb-3 pt-6 text-center text-gray-500">
-                  <p>No accounts yet</p>
-                </td>
+        <>
+          <table className="my-4 w-full">
+            <thead>
+              <tr className="border-b">
+                <th className="py-2 text-left">Account Number</th>
+                <th className="py-2 text-left">Balance</th>
+                <th className="py-2 text-right">Actions</th>
               </tr>
-            )}
-            {accounts.map((account) => (
-              <tr key={account.id} className="border-b">
-                <td className="py-2">{account.account_number}</td>
-                <td className="py-2 capitalize">${account.balance.toFixed(2)}</td>
-                <td className="flex justify-end gap-2 py-2">
-                  <Button data-style="action" data-size="small" onClick={() => onViewAccount(account.account_number)}>
-                    View
-                  </Button>
-                </td>
-              </tr>
-            ))}
-            <tr>
-              <td colSpan={3} className="pb-1 pt-4">
-                <div className="flex items-center justify-center">
-                  <Button data-style="action" onClick={onCreateAccount}>
-                    Create Account
-                  </Button>
-                </div>
-              </td>
-            </tr>
-          </tbody>
-        </table>
+            </thead>
+            <tbody>
+              {accounts.length === 0 && (
+                <tr>
+                  <td colSpan={3} className="pb-3 pt-6 text-center text-gray-500">
+                    <p>No accounts found</p>
+                  </td>
+                </tr>
+              )}
+              {accounts.map((account) => (
+                <tr key={account.id} className="border-b">
+                  <td
+                    className="cursor-pointer py-2 text-blue-500 hover:text-blue-600 hover:underline"
+                    onClick={() => onViewAccount(account.account_number)}
+                  >
+                    {account.account_number}
+                  </td>
+                  <td className="py-2 capitalize">${account.balance.toFixed(2)}</td>
+                  <td className="flex justify-end gap-2 py-2">
+                    <Button
+                      data-style="primary"
+                      data-size="small"
+                      onClick={() => onTransferFromAccount(account.account_number)}
+                    >
+                      Transfer
+                    </Button>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+          <Button data-style="action" data-size="small" className="mt-4" onClick={onCreateAccount}>
+            Create Account
+          </Button>
+        </>
       )}
       {isError && <Banner type="error" message={error?.message} />}
     </div>
