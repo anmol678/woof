@@ -49,6 +49,10 @@ class ExcessiveAmountException(TransactionError):
         self.max_amount = max_amount
         super().__init__(f"Amount {amount} exceeds maximum allowed amount of {max_amount}.")
 
+class SameAccountTransferException(TransactionError):
+    def __init__(self):
+        super().__init__("Sender and receiver accounts cannot be the same.")
+
 exception_to_status_code: Dict[Type[Exception], int] = {
     CustomerNotFoundException: HTTP_404_NOT_FOUND,
     AccountNotFoundException: HTTP_404_NOT_FOUND,
@@ -57,6 +61,7 @@ exception_to_status_code: Dict[Type[Exception], int] = {
     InvalidAccountNumberException: HTTP_400_BAD_REQUEST,
     InvalidAmountException: HTTP_400_BAD_REQUEST,
     ExcessiveAmountException: HTTP_400_BAD_REQUEST,
+    SameAccountTransferException: HTTP_400_BAD_REQUEST,
 }
 
 async def service_exception_handler(request: Request, exc: Exception) -> JSONResponse:

@@ -15,6 +15,8 @@ class TransferService:
             raise InvalidAccountNumberException(account_number=transfer.sender_account_number)
         if not validate_account_number(transfer.receiver_account_number):
             raise InvalidAccountNumberException(account_number=transfer.receiver_account_number)
+        if transfer.sender_account_number == transfer.receiver_account_number:
+            raise SameAccountTransferException()
         
         validate_amount(transfer.amount)
 
