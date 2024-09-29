@@ -28,7 +28,7 @@ export default function CustomerPage({ searchParams }: { searchParams: { custome
   }
 
   return (
-    <div className="mx-auto max-w-2xl">
+    <div className="mx-auto max-w-4xl">
       <BackButton />
       <h1 className="mb-4 text-2xl font-bold">Customer Details</h1>
       <form className="mb-6">

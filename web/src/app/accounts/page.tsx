@@ -29,7 +29,7 @@ export default function AccountPage({ searchParams }: { searchParams: { accountN
   }
 
   return (
-    <div className="mx-auto max-w-2xl">
+    <div className="mx-auto max-w-4xl">
       <BackButton />
       <h1 className="mb-4 text-2xl font-bold">Account Details</h1>
       <form className="mb-6">
