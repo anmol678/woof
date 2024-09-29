@@ -4,6 +4,10 @@ Woof is a customer support dashboard and API that supports basic banking functio
 
 ## 🎥 Demo
 
+
+https://github.com/user-attachments/assets/a66609f5-7ea3-4a85-9db5-4d286d5cb769
+
+
 ## 🚀 Running the Project
 
 To run this project, follow these simple steps:
