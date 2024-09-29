@@ -1,8 +1,9 @@
 'use client'
 
-import { useState, useEffect, useRef, useCallback } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { useRouter } from 'next/navigation'
-import { useMutation, useQueryClient } from '@tanstack/react-query'
+import { useSyncedState } from '@/hooks/useSyncedState'
+import { useMutationHandler } from '@/hooks/useMutationHandler'
 import { Account, AccountCreate } from '@/types'
 import { AccountQuery } from '@/queries'
 import BackButton from '@/components/BackButton'
@@ -10,69 +11,55 @@ import Button from '@/components/Button'
 import Banner from '@/components/Banner'
 import CustomerPicker from '@/components/customer/CustomerPicker'
 import Routes from '@/utils/routes'
+import Params from '@/utils/params'
 
-export default function CreateAccount({
-  searchParams
-}: {
+interface CreateAccountProps {
   searchParams: { customerNumber: string; redirect: string }
-}) {
+}
+
+export default function CreateAccount({ searchParams }: CreateAccountProps) {
   const router = useRouter()
 
-  const queryClient = useQueryClient()
+  const [selectedCustomer, setSelectedCustomer] = useSyncedState<string | null>(Params.CUSTOMER_NUMBER, null)
 
-  const [selectedCustomer, setSelectedCustomer] = useState<string | null>(null)
   const [initialDeposit, setInitialDeposit] = useState('')
   const initialDepositRef = useRef<HTMLInputElement>(null)
 
   const isRedirect = Object.values(Routes).includes(searchParams.redirect as Routes)
 
   useEffect(() => {
-    if (searchParams.customerNumber) {
-      setSelectedCustomer(searchParams.customerNumber)
+    if (selectedCustomer) {
       initialDepositRef.current?.focus()
     }
-  }, [searchParams.customerNumber])
+  }, [selectedCustomer, initialDepositRef])
 
-  const mutation = useMutation<Account, Error, AccountCreate>({
+  const mutation = useMutationHandler<Account, AccountCreate, Error>({
     mutationFn: AccountQuery.create,
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['accounts'] })
-    }
+    invalidateQuery: ['accounts']
   })
 
-  const handleSubmit = useCallback(
-    async (e: React.FormEvent) => {
-      e.preventDefault()
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault()
 
-      if (selectedCustomer === null) {
-        alert('Select a customer')
-        return
+    if (selectedCustomer === null) {
+      alert('Select a customer')
+      return
+    }
+
+    const accountCreate: AccountCreate = {
+      customer_number: selectedCustomer,
+      initial_deposit: parseFloat(initialDeposit)
+    }
+
+    mutation.mutate(accountCreate, {
+      onSuccess: (data) => {
+        setSelectedCustomer(null)
+        setInitialDeposit('')
+        const redirect = isRedirect ? searchParams.redirect : Routes.CUSTOMER_DETAILS
+        router.push(`${redirect}?customerNumber=${data.customer_number}&from=create-account`)
       }
-
-      mutation.mutate(
-        { customer_number: selectedCustomer, initial_deposit: parseFloat(initialDeposit) },
-        {
-          onSuccess: (data) => {
-            setSelectedCustomer(null)
-            setInitialDeposit('')
-            const redirect = isRedirect ? searchParams.redirect : Routes.CUSTOMER_DETAILS
-            router.push(`${redirect}?customerNumber=${data.customer_number}&from=create-account`)
-          }
-        }
-      )
-    },
-    [selectedCustomer, initialDeposit, mutation, isRedirect, searchParams, router]
-  )
-
-  const handleCustomerSelect = useCallback(
-    (customerNumber: string | null) => {
-      setSelectedCustomer(customerNumber)
-      if (customerNumber) {
-        initialDepositRef.current?.focus()
-      }
-    },
-    [initialDepositRef]
-  )
+    })
+  }
 
   const backRoute = isRedirect ? undefined : '/'
 
@@ -85,7 +72,7 @@ export default function CreateAccount({
           <label htmlFor="customerNumber" className="mb-2 block">
             Pick a customer
           </label>
-          <CustomerPicker selectedCustomer={selectedCustomer} onSelectCustomer={handleCustomerSelect} />
+          <CustomerPicker selectedCustomer={selectedCustomer} onSelectCustomer={setSelectedCustomer} />
         </div>
         <div>
           <label htmlFor="initialDeposit" className="mb-2 block">
