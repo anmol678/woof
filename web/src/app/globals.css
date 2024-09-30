@@ -55,11 +55,7 @@
   }
 
   .back-button {
-    @apply link mb-4 text-sm text-gray-600;
-  }
-
-  .back-button:hover svg {
-    @apply text-blue-600;
+    @apply link hover-transition mb-4 flex items-center gap-2 rounded-full p-1 px-2 text-sm text-blue-600 hover:bg-gray-600/20;
   }
 
   .alert {

@@ -12,7 +12,8 @@ export default function BackButton({ route }: BackButtonProps) {
 
   return (
     <button className="back-button flex items-center justify-center" onClick={action}>
-      <ChevronLeftIcon className="-ml-1 h-6 w-6 stroke-2" /> Back
+      <ChevronLeftIcon className="-ml-2 h-6 w-6 stroke-2" />
+      <span className="-ml-2">Back</span>
     </button>
   )
 }
