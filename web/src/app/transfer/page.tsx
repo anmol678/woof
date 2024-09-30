@@ -2,6 +2,7 @@
 
 import { useState } from 'react'
 import { useAccountRouting } from '@/hooks/useRouting'
+import { useAlerts } from '@/contexts/alert'
 import { useSyncedState } from '@/hooks/useSyncedState'
 import { useMutationHandler } from '@/hooks/useMutationHandler'
 import { TransferQuery } from '@/queries'
@@ -9,11 +10,12 @@ import { Transfer, TransferCreate } from '@/types'
 import BackButton from '@/components/BackButton'
 import AccountPicker from '@/components/account/AccountPicker'
 import Button from '@/components/Button'
-import Banner from '@/components/Banner'
 import Params from '@/utils/params'
 
 export default function TransferPage() {
   const { redirectToAccountDetails } = useAccountRouting()
+
+  const { addAlert } = useAlerts()
 
   const [fromAccount, setFromAccount] = useSyncedState<string | null>(Params.TRANSFER_FROM, null)
   const [toAccount, setToAccount] = useSyncedState<string | null>(Params.TRANSFER_TO, null)
@@ -39,7 +41,12 @@ export default function TransferPage() {
     }
 
     mutation.mutate(transferCreate, {
-      onSuccess: () => {}
+      onSuccess: () => {
+        addAlert('success', `Transferred ${amount} from ${fromAccount} to ${toAccount}.`)
+      },
+      onError: (error: Error) => {
+        addAlert('error', error.message)
+      }
     })
   }
 
@@ -87,10 +94,6 @@ export default function TransferPage() {
           Transfer Funds
         </Button>
       </form>
-      <div>
-        {mutation.isSuccess && <Banner type="success" message={`Transfer successful`} />}
-        {mutation.isError && <Banner type="error" message={mutation.error?.message} />}
-      </div>
     </div>
   )
 }
