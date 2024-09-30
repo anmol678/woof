@@ -1,34 +1,42 @@
-import { useState, useEffect } from 'react'
-import { useRouter } from 'next/navigation'
+import { useState, useEffect, useCallback } from 'react'
+import { useRouter, useSearchParams } from 'next/navigation'
 
 export function useSyncedState<T>(
   paramName: string,
   initialValue: T,
-  parseFn?: (value: string) => T,
-  serializeFn?: (value: T) => string
+  parseFn: (value: string) => T = (value) => value as unknown as T,
+  serializeFn: (value: T) => string = String
 ): [T, (value: T | null) => void] {
   const router = useRouter()
 
-  const [state, setState] = useState<T>(initialValue)
+  const searchParams = useSearchParams()
+
+  const getValueFromParam = useCallback(
+    (paramValue: string | null): T => {
+      return paramValue !== null ? parseFn(paramValue) : initialValue
+    },
+    [parseFn, initialValue]
+  )
+
+  const [state, setState] = useState<T>(() => getValueFromParam(searchParams.get(paramName)))
 
   useEffect(() => {
-    const urlParams = new URLSearchParams(window.location.search)
-    const paramValue = urlParams.get(paramName)
-    if (paramValue !== null) {
-      setState(parseFn ? parseFn(paramValue) : (paramValue as unknown as T))
-    }
-  }, [paramName, parseFn, router])
+    setState(getValueFromParam(searchParams.get(paramName)))
+  }, [searchParams, paramName, getValueFromParam])
 
-  const setSyncedState = (value: T | null) => {
-    const urlParams = new URLSearchParams(window.location.search)
-    if (value !== null) {
-      urlParams.set(paramName, serializeFn ? serializeFn(value) : String(value))
-    } else {
-      urlParams.delete(paramName)
-    }
-    router.replace(`${window.location.pathname}?${urlParams.toString()}`)
-    setState(value === null ? initialValue : value)
-  }
+  const setSyncedState = useCallback(
+    (value: T | null) => {
+      const newSearchParams = new URLSearchParams(searchParams.toString())
+      if (value !== null) {
+        newSearchParams.set(paramName, serializeFn(value))
+      } else {
+        newSearchParams.delete(paramName)
+      }
+      router.replace(`${window.location.pathname}?${newSearchParams.toString()}`)
+      setState(value === null ? initialValue : value)
+    },
+    [searchParams, paramName, serializeFn, router, initialValue]
+  )
 
   return [state, setSyncedState]
 }

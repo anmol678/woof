@@ -1,6 +1,5 @@
 'use client'
 
-import { useEffect } from 'react'
 import { useSyncedState } from '@/hooks/useSyncedState'
 import BackButton from '@/components/BackButton'
 import AccountPicker from '@/components/account/AccountPicker'
@@ -14,12 +13,6 @@ interface AccountPageProps {
 
 export default function AccountPage({ searchParams }: AccountPageProps) {
   const [accountNumber, setAccountNumber] = useSyncedState<string | null>(Params.ACCOUNT_NUMBER, null)
-
-  useEffect(() => {
-    if (searchParams.accountNumber) {
-      setAccountNumber(searchParams.accountNumber)
-    }
-  }, [searchParams.accountNumber, setAccountNumber])
 
   const backRoute = searchParams.from ? '/' : undefined
 
