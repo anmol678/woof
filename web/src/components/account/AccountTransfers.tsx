@@ -6,7 +6,7 @@ import { useQuery } from '@tanstack/react-query'
 import { AccountQuery } from '@/queries'
 import { Transfer } from '@/types'
 import Loader from '@/components/Loader'
-import Banner from '@/components/Banner'
+import Alert from '@/components/Alert'
 import Button from '@/components/Button'
 import { cn } from '@/utils/styles'
 import { formatDate } from '@/utils/date'
@@ -88,7 +88,7 @@ export default function AccountTransfers({ accountNumber }: AccountTransfersProp
           </Button>
         </>
       )}
-      {isError && <Banner type="error" message={error?.message} />}
+      {isError && <Alert type="error" message={error?.message} />}
     </div>
   )
 }

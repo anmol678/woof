@@ -6,7 +6,7 @@ import { useQuery } from '@tanstack/react-query'
 import { CustomerQuery } from '@/queries'
 import { Account } from '@/types'
 import Loader from '@/components/Loader'
-import Banner from '@/components/Banner'
+import Alert from '@/components/Alert'
 import Button from '@/components/Button'
 import Routes from '@/utils/routes'
 
@@ -86,7 +86,7 @@ export default function CustomerAccounts({ customerNumber }: CustomerAccountsPro
           </Button>
         </>
       )}
-      {isError && <Banner type="error" message={error?.message} />}
+      {isError && <Alert type="error" message={error?.message} />}
     </div>
   )
 }

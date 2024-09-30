@@ -4,7 +4,7 @@ import { useCustomerRouting } from '@/hooks/useRouting'
 import { useQuery } from '@tanstack/react-query'
 import { Account } from '@/types'
 import { AccountQuery } from '@/queries'
-import Banner from '@/components/Banner'
+import Alert from '@/components/Alert'
 import Loader from '@/components/Loader'
 
 interface AccountDetailsProps {
@@ -38,7 +38,7 @@ export default function AccountDetails({ accountNumber }: AccountDetailsProps) {
         </div>
         {isLoading && <Loader data-style="accent" />}
         {isSuccess && <p className="text-2xl font-bold text-green-600">${accountDetails.balance.toFixed(2)}</p>}
-        {isError && <Banner type="error" message={error?.message} />}
+        {isError && <Alert type="error" message={error?.message} />}
       </div>
     </div>
   )

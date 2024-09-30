@@ -4,7 +4,7 @@ import { useQuery } from '@tanstack/react-query'
 import { useCustomerRouting } from '@/hooks/useRouting'
 import { Customer } from '@/types'
 import { CustomerQuery } from '@/queries'
-import Banner from '@/components/Banner'
+import Alert from '@/components/Alert'
 import Loader from '@/components/Loader'
 import Picker from '@/components/Picker'
 import Routes from '@/utils/routes'
@@ -64,7 +64,7 @@ export default function CustomerPicker({ selectedCustomer, onSelectCustomer }: C
           }}
         />
       ) : null}
-      {isError && <Banner type="error" message={error?.message} />}
+      {isError && <Alert type="error" message={error?.message} />}
     </div>
   )
 }

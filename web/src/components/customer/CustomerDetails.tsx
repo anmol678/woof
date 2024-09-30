@@ -3,7 +3,7 @@
 import { useQuery } from '@tanstack/react-query'
 import { Customer } from '@/types'
 import { CustomerQuery } from '@/queries'
-import Banner from '@/components/Banner'
+import Alert from '@/components/Alert'
 import Loader from '@/components/Loader'
 
 interface CustomerDetailsProps {
@@ -28,7 +28,7 @@ export default function CustomerDetails({ customerNumber }: CustomerDetailsProps
         <h2>Customer Information</h2>
         {isLoading && <Loader data-style="accent" />}
         {isSuccess && <p className="text-lg font-medium">Name: {customerDetails.name}</p>}
-        {isError && <Banner type="error" message={error?.message} />}
+        {isError && <Alert type="error" message={error?.message} />}
       </div>
     </div>
   )

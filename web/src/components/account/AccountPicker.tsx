@@ -3,7 +3,7 @@
 import { useQuery } from '@tanstack/react-query'
 import { Account } from '@/types'
 import { AccountQuery } from '@/queries'
-import Banner from '@/components/Banner'
+import Alert from '@/components/Alert'
 import Loader from '@/components/Loader'
 import Picker from '@/components/Picker'
 
@@ -47,7 +47,7 @@ export default function AccountPicker({ selectedAccount, onSelectAccount, autoFo
           autoFocus={autoFocus}
         />
       ) : null}
-      {isError && <Banner type="error" message={error?.message} />}
+      {isError && <Alert type="error" message={error?.message} />}
     </div>
   )
 }
