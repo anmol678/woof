@@ -49,7 +49,7 @@ export default function CreateAccount({ searchParams }: CreateAccountProps) {
     e.preventDefault()
 
     if (selectedCustomer === null) {
-      alert('Select a customer')
+      addAlert('error', 'Select a customer to create an account for')
       return
     }
 
